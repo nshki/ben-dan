@@ -7,7 +7,7 @@ if Rails.env.development?
   require 'annotate'
 
   # rubocop:disable Metrics/BlockLength
-  task :set_annotation_options, dependent: :environment do
+  task set_annotation_options: :environment do
     # rubocop:enable Metrics/BlockLength
 
     # You can override any of these by setting an environment variable of the
