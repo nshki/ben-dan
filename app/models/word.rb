@@ -9,6 +9,10 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
+# Indexes
+#
+#  index_words_on_spelling  (spelling)
+#
 
 # Represents a valid word that can be played.
 class Word < ApplicationRecord
