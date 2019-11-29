@@ -23,6 +23,8 @@ end
 
 group :development do
   gem 'annotate'
+  gem 'chusaku', require: false
+  gem 'lefthook'
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'rubocop', require: false
   gem 'rubocop-performance'
