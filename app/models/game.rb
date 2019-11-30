@@ -12,6 +12,9 @@
 
 # Represents a single game.
 class Game < ApplicationRecord
+  has_many :game_users, dependent: :destroy
+  has_many :users, through: :game_users
+
   validate :validate_board_structure
 
   private
