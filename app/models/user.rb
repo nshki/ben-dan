@@ -18,5 +18,5 @@ class User < ApplicationRecord
   has_many :game_users, dependent: :destroy
   has_many :games, through: :game_users
 
-  validates :username, presence: true
+  validates :username, presence: true, uniqueness: true
 end

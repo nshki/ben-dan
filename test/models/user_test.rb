@@ -25,4 +25,11 @@ class UserTest < ActiveSupport::TestCase
 
     assert_not(user.valid?)
   end
+
+  test 'invalid without unique username' do
+    FactoryBot.create(:user, username: 'same username')
+    user = FactoryBot.build(:user, username: 'same username')
+
+    assert_not(user.valid?)
+  end
 end

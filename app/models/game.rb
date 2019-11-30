@@ -4,16 +4,18 @@
 #
 # Table name: games
 #
-#  id         :bigint           not null, primary key
-#  board      :jsonb
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id                   :bigint           not null, primary key
+#  board                :jsonb
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  current_turn_user_id :bigint
 #
 
 # Represents a single game.
 class Game < ApplicationRecord
   has_many :game_users, dependent: :destroy
   has_many :users, through: :game_users
+  belongs_to :current_turn_user, class_name: 'User', optional: true
 
   validate :validate_board_structure
 
