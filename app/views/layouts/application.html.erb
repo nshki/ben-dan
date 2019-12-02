@@ -1,15 +1,28 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>BenDan</title>
+    <title>Ben Dan</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%=
+      stylesheet_link_tag \
+        'application',
+        'data-turbolinks-track': 'reload',
+        media: 'all'
+    %>
+    <%= javascript_pack_tag('application', 'data-turbolinks-track': 'reload') %>
   </head>
 
   <body>
+    <nav>
+      <% if signed_in? %>
+        <%= link_to('Logout', session_path(-1), method: :delete) %>
+      <% else %>
+        <%= link_to('Login', new_session_path) %>
+      <% end %>
+    </nav>
+
     <%= yield %>
   </body>
 </html>

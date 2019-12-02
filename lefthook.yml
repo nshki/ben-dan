@@ -3,4 +3,4 @@ pre-commit:
     chusaku:
       run: eval "! git diff --staged --name-only | grep -q 'routes.rb' && exit 0 || bundle exec chusaku --exit-with-error-on-annotation"
     rubocop:
-      run: bundle exec rubocop --force-exclusion {staged_files}
+      run: bundle exec rubocop -a --force-exclusion {staged_files}
