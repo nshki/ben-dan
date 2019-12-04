@@ -6,16 +6,26 @@ class GamesController < ApplicationController
 
   # @route GET / (root)
   # @route GET /games (games)
-  def index; end
+  def index
+    @games = current_user.games
+  end
 
   # @route GET /games/new (new_game)
-  def new; end
+  def new
+    @players = User.where.not(id: current_user.id)
+  end
 
   # @route POST /games (games)
-  def create; end
+  def create
+    opponent = User.find_by(id: params[:opponent_id])
+    game = GameCreator.call(users: [current_user, opponent])
+    redirect_to(edit_game_path(game))
+  end
 
   # @route GET /games/:id/edit (edit_game)
-  def edit; end
+  def edit
+    @game = Game.find_by(id: params[:id])
+  end
 
   # @route PATCH /games/:id (game)
   # @route PUT /games/:id (game)

@@ -1,0 +1,22 @@
+//= require_tree .
+//= require_self
+
+.board {
+  display: inline-flex;
+  flex-direction: row;
+  border: 1px solid #000;
+}
+
+.board__col {
+  display: flex;
+  flex-direction: column;
+}
+
+.board__tile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  border: 1px solid #000;
+}

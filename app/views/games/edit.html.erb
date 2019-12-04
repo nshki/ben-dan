@@ -1,0 +1,11 @@
+<div class="board">
+  <% @game.board.each do |col| %>
+    <div class="board__col">
+      <% col.each do |tile| %>
+        <div class="board__tile">
+          <%= tile %>
+        </div><!-- .board__tile -->
+      <% end %>
+    </div><!-- .board__col -->
+  <% end %>
+</div><!-- .board -->

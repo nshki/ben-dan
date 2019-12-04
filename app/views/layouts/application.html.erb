@@ -18,6 +18,7 @@
     <nav>
       <% if signed_in? %>
         <%= link_to('Logout', session_path(-1), method: :delete) %>
+        <%= link_to('Games', games_path) %>
       <% else %>
         <%= link_to('Login', new_session_path) %>
       <% end %>

@@ -1,0 +1,10 @@
+<%= form_with(url: games_path) do |f| %>
+  <%= f.label(:opponent_id, 'Opponent') %>
+  <%=
+    f.select \
+      :opponent_id,
+      options_from_collection_for_select(@players, 'id', 'username')
+  %>
+
+  <%= f.submit('Start Game') %>
+<% end %>

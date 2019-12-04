@@ -13,8 +13,13 @@
 
 FactoryBot.define do
   factory :user do
-    username { 'Username' }
-    password { 'password' }
-    password_confirmation { 'password' }
+    transient do
+      u { 'Username' }
+      p { 'password' }
+    end
+
+    username { u }
+    password { p }
+    password_confirmation { p }
   end
 end
