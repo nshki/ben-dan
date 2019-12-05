@@ -6,6 +6,7 @@
 #
 #  id                   :bigint           not null, primary key
 #  board                :jsonb
+#  tile_bag             :string           default([]), is an Array
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  current_turn_user_id :bigint
@@ -18,6 +19,16 @@ class Game < ApplicationRecord
   belongs_to :current_turn_user, class_name: 'User', optional: true
 
   validate :validate_board_structure
+  validate :validate_tile_bag
+
+  # Gets a tile from the tile bag.
+  #
+  # @return {String} - A tile from the tile bag
+  def pull_random_tile
+    tile = tile_bag.delete_at(rand(tile_bag.count))
+    save
+    tile
+  end
 
   private
 
@@ -45,5 +56,17 @@ class Game < ApplicationRecord
     return if (piece.is_a?(String) && piece.length == 1) || piece.nil?
 
     errors.add(:board, 'can only contain characters or blanks')
+  end
+
+  # Validates that the tile bag is:
+  #   - filled with only single chars
+  #
+  # @return {void}
+  def validate_tile_bag
+    tile_bag.each do |tile|
+      unless tile&.length == 1
+        errors.add(:tile_bag, 'can only contain single characters') && break
+      end
+    end
   end
 end

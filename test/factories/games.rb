@@ -6,6 +6,7 @@
 #
 #  id                   :bigint           not null, primary key
 #  board                :jsonb
+#  tile_bag             :string           default([]), is an Array
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  current_turn_user_id :bigint
