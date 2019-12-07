@@ -14,6 +14,8 @@
 
 # Represents a single game.
 class Game < ApplicationRecord
+  TILES = %w[a b c d e f g h i j k l m n o p q r s t u v w x y z].freeze
+
   has_many :game_users, dependent: :destroy
   has_many :users, through: :game_users
   belongs_to :current_turn_user, class_name: 'User', optional: true
@@ -21,13 +23,20 @@ class Game < ApplicationRecord
   validate :validate_board_structure
   validate :validate_tile_bag
 
-  # Gets a tile from the tile bag.
+  # Gets tiles from the tile bag.
   #
-  # @return {String} - A tile from the tile bag
-  def pull_random_tile
-    tile = tile_bag.delete_at(rand(tile_bag.count))
+  # @param {Integer} count - How many tiles to pull
+  # @return {Array<String>} - Tiles from the tile bag
+  def pull_random_tiles(count:)
+    tiles = []
+
+    count.times do
+      random_tile = tile_bag.delete_at(rand(tile_bag.count))
+      tiles.push(random_tile)
+    end
+
     save
-    tile
+    tiles
   end
 
   private

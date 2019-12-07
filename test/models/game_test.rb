@@ -51,14 +51,15 @@ class GameTest < ActiveSupport::TestCase
     assert(tile_bag_letters.valid?)
   end
 
-  test 'can pull random tile from tile bag' do
+  test 'can pull random tiles from tile bag' do
     game = FactoryBot.create(:game, tile_bag: %w[a b c])
 
-    tile = game.pull_random_tile
+    tiles = game.pull_random_tiles(count: 1)
     game.reload
 
-    assert(tile.in?(%w[a b c]))
+    assert_equal(1, tiles.count)
+    assert(tiles.first.in?(%w[a b c]))
     assert_equal(2, game.tile_bag.count)
-    assert_not(game.tile_bag.include?(tile))
+    assert_not(game.tile_bag.include?(tiles.first))
   end
 end
