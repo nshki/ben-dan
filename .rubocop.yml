@@ -8,3 +8,10 @@ AllCops:
     - 'config/**/*'
     - 'db/**/*'
     - 'node_modules/**/*'
+
+Metrics/ClassLength:
+  Exclude:
+    - 'test/**/*'
+
+Metrics/MethodLength:
+  Max: 25
