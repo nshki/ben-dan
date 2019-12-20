@@ -50,6 +50,14 @@ class Game < ApplicationRecord
     game_users.find_by(user: current_turn_user)
   end
 
+  # Given a User, returns the corresponding GameUser.
+  #
+  # @param {User} - User record
+  # @return {GameUser} - Player for the User
+  def player(user)
+    game_users.find_by(user: user)
+  end
+
   # Passes the turn to the next player.
   #
   # @return {void}
