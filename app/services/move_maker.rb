@@ -10,21 +10,17 @@ class MoveMaker
     # @return {Boolean} - True if successful, false otherwise
     def call(game:, placements:)
       @game = game
-      placements = placements
+      @placements = placements
       @current_player = @game.current_player
 
-      placements.each do |placement|
+      @placements.each do |placement|
         hand_tile = pick_tile_from_hand(placement[:tile])
         return false if hand_tile.blank? || illegal_placement?(placement)
 
         place_tile(placement: placement, tile: hand_tile)
       end
 
-      # Attempt the transaction. We want to remove all `nil`s from the current
-      # player's hand to account for the end game, when pulls from the tile bag
-      # will be blank.
-      @current_player.hand.compact!
-      Game.transaction { @game.save! && @current_player.save! }
+      make_transaction
     rescue ActiveRecord::RecordInvalid
       false
     end
@@ -76,6 +72,22 @@ class MoveMaker
     # @return {void}
     def place_tile(placement:, tile:)
       @game.board[placement[:col]][placement[:row]] = tile
+    end
+
+    # Attempt the transaction. We want to remove all `nil`s from the current
+    # player's hand to account for the end game, when pulls from the tile bag
+    # will be blank.
+    #
+    # @return {Boolean} - True on success, false otherwise
+    def make_transaction
+      @current_player.hand.compact!
+      if (ok = Game.transaction { @game.save! && @current_player.save! })
+        ScoreCalculator.call \
+          game: @game,
+          placements: @placements,
+          player: @current_player
+      end
+      ok
     end
   end
 end

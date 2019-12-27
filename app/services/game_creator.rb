@@ -48,8 +48,8 @@ class GameCreator
   # @return {void}
   def self.deal_tiles(game:, tile_count:)
     game.users.each do |user|
-      game_user = game.game_users.find_by(user: user)
-      game_user.update(hand: game.pull_random_tiles(count: tile_count))
+      player = game.player(user)
+      player.update(hand: game.pull_random_tiles(count: tile_count))
     end
   end
 end
