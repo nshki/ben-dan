@@ -66,7 +66,7 @@ class ScoreCalculator
       words.each do |word|
         word.each do |tile|
           tile.symbolize_keys!
-          next if processed_tiles.include?(tile)
+          next if processed_tiles.include?(tile) || !part_of_move?(tile)
 
           points *= 2 if tile[:rule] == 'dw'
           points *= 3 if tile[:rule] == 'tw'
@@ -75,6 +75,22 @@ class ScoreCalculator
       end
 
       points
+    end
+
+    # Determines whether a given tile was a part of the move.
+    #
+    # @param {Hash} tile - { col: Int, row: Int }
+    # @return {Boolean} - True if tile is part of the move, false otherwise
+    def part_of_move?(tile)
+      tile.symbolize_keys!
+
+      @placements.each do |placement|
+        col_matches = placement[:col] == tile[:col]
+        row_matches = placement[:row] == tile[:row]
+        return true if col_matches && row_matches
+      end
+
+      false
     end
 
     # Find new words formed by the move.
