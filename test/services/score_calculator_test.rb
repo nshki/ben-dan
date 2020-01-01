@@ -12,8 +12,8 @@ class ScoreCalculatorTest < ActiveSupport::TestCase
       current_turn_user: user1,
       board: [
         [
-          { player: game.player(user1), tile: 'a', rule: nil },
-          { player: game.player(user1), tile: 'a', rule: nil }
+          { player: game.player(user1).id, tile: 'a', rule: nil },
+          { player: game.player(user1).id, tile: 'a', rule: nil }
         ]
       ]
     placements = [{ col: 0, row: 1, tile: 0 }]
