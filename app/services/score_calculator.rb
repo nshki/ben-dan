@@ -36,17 +36,45 @@ class ScoreCalculator
 
     # Apply points for given words.
     #
-    # @param {Array<Array<Hash>>} -
+    # @param {Array<Array<Hash>>} words -
     #   [[{ tile: String, rule: Symbol, row: Int, col: Int }]]
     # @return {void}
     def apply_points(words)
+      new_points = 0
+
       words.each do |word|
         word.each do |tile|
           tile.symbolize_keys!
-          @player.score += STANDARD_VALUES[tile[:tile].to_sym]
+          new_points += STANDARD_VALUES[tile[:tile].to_sym]
         end
       end
+
+      new_points = apply_word_rules(words: words, points: new_points)
+
+      @player.score += new_points
       @player.save
+    end
+
+    # Given words and points, apply any applicable word point rules.
+    #
+    # @param {Array<Array<Hash>>} words -
+    #   [[{ tile: String, rule: String, row: Int, col: Int }]]
+    # @return {Integer} - Newly manipulated
+    def apply_word_rules(words:, points:)
+      processed_tiles = []
+
+      words.each do |word|
+        word.each do |tile|
+          tile.symbolize_keys!
+          next if processed_tiles.include?(tile)
+
+          points *= 2 if tile[:rule] == 'dw'
+          points *= 3 if tile[:rule] == 'tw'
+          processed_tiles.push(tile)
+        end
+      end
+
+      points
     end
 
     # Find new words formed by the move.
@@ -91,7 +119,7 @@ class ScoreCalculator
     #
     # @param {Hash} placement - { col: Int, row: Int }
     # @return {Array<Hash>} -
-    #   [{ tile: String, rule: Symbol, row: Int, col: Int }]
+    #   [{ tile: String, rule: String, row: Int, col: Int }]
     def vert_tiles(placement)
       tiles = []
       curr_col = placement[:col]
