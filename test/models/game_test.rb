@@ -21,20 +21,26 @@ class GameTest < ActiveSupport::TestCase
     assert(game.valid?)
   end
 
-  test 'invalid unless board is at most a two-dimensional array with chars' do
+  test 'invalid unless board is a two-dimensional array with chars' do
     game_no_array = FactoryBot.build(:game, board: nil)
     game_not_array = FactoryBot.build(:game, board: 'not array')
-    game_array_with_non_chars = FactoryBot.build(:game, board: [1, 'abc'])
     game_empty_array = FactoryBot.build(:game, board: [])
-    game_1d_array = FactoryBot.build(:game, board: ['a', nil, nil])
-    game_2d_array = FactoryBot.build(:game, board: [['a', nil]])
-    game_3d_array = FactoryBot.build(:game, board: [[['a', nil]]])
+    game_bad_tile_format = FactoryBot.build(:game, board: [{ n: :o }])
+    game_1d_array = FactoryBot.build \
+      :game,
+      board: [{ tile: 'a', rule: nil, player: nil }, nil, nil]
+    game_2d_array = FactoryBot.build \
+      :game,
+      board: [[{ tile: 'a', rule: nil, player: nil }, nil]]
+    game_3d_array = FactoryBot.build \
+      :game,
+      board: [[[{ tile: 'a', rule: nil, player: nil }, nil]]]
 
     assert_not(game_no_array.valid?)
     assert_not(game_not_array.valid?)
-    assert_not(game_array_with_non_chars.valid?)
-    assert(game_empty_array.valid?)
-    assert(game_1d_array.valid?)
+    assert_not(game_empty_array.valid?)
+    assert_not(game_bad_tile_format.valid?)
+    assert_not(game_1d_array.valid?)
     assert(game_2d_array.valid?)
     assert_not(game_3d_array.valid?)
   end

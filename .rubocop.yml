@@ -9,6 +9,10 @@ AllCops:
     - 'db/**/*'
     - 'node_modules/**/*'
 
+Metrics/BlockLength:
+  Exclude:
+    - 'test/**/*'
+
 Metrics/ClassLength:
   Exclude:
     - 'test/**/*'

@@ -70,30 +70,35 @@ class Game < ApplicationRecord
 
   private
 
-  # Validates that the board is:
-  #   - at most a two-dimensional array
-  #   - contains only chars or nils
+  # Validates that the board is a two-dimensional array.
   #
   # @return {void}
   def validate_board_structure
-    errors.add(:board, 'must be an array') && return unless board.is_a?(Array)
+    validation_message = 'must be 2d array'
+
+    unless board.is_a?(Array) && board.length.positive?
+      errors.add(:board, validation_message) && return
+    end
 
     board.each do |col|
-      if col.is_a?(Array)
-        col.each { |row| validate_board_piece(row) }
-      else
-        validate_board_piece(col)
-      end
+      errors.add(:board, validation_message) && break unless col.is_a?(Array)
+
+      col.each { |row| validate_board_piece(row) }
     end
   end
 
-  # Validates that the given object is a char or nil.
+  # Validates that the given object is a formatted `Hash` or nil.
   #
   # @return {void}
   def validate_board_piece(piece)
-    return if (piece.is_a?(String) && piece.length == 1) || piece.nil?
+    valid_hash =
+      piece.is_a?(Hash) &&
+      piece.symbolize_keys.key?(:tile) &&
+      piece.symbolize_keys.key?(:rule) &&
+      piece.symbolize_keys.key?(:player)
+    return if valid_hash || piece.nil?
 
-    errors.add(:board, 'can only contain characters or blanks')
+    errors.add(:board, 'must have correctly formatted pieces')
   end
 
   # Validates that the tile bag is:
@@ -112,22 +117,31 @@ class Game < ApplicationRecord
   #
   # @return {void}
   def validate_board_words
-    all_cols = Array.new(board.count, '')
-    all_rows = Array.new(board.first.count, '')
-
-    board.each_with_index do |col, y|
-      col.each_with_index do |tile, x|
-        all_cols[y] += tile || ' '
-        all_rows[x] += tile || ' '
-      end
-    end
-
-    validate_words(all_cols)
-    validate_words(all_rows)
+    col_words, row_words = gather_all_words
+    validate_words(col_words)
+    validate_words(row_words)
   rescue StandardError
     # Accounting for when the board is not a proper 2D array. The board
     # structure validation will handle that case.
     false
+  end
+
+  # Gather all words in the board, organized by columns and rows.
+  #
+  # @return {Array<Array<String>>} - [<all column words>, <all row words>]
+  def gather_all_words
+    col_words = Array.new(board.count, '')
+    row_words = Array.new(board.first.count, '')
+
+    board.each_with_index do |col, y|
+      col.each_with_index do |tile, x|
+        str = tile.try(:[], 'tile') || ' '
+        col_words[y] += str
+        row_words[x] += str
+      end
+    end
+
+    [col_words, row_words]
   end
 
   # Validates each word in the given string.

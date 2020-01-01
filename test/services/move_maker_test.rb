@@ -9,24 +9,31 @@ class MoveMakerTest < ActiveSupport::TestCase
     game = FactoryBot.create \
       :game,
       tile_bag: %w[b b b],
+      board: [[{ tile: nil, rule: 'u', player: nil }, nil]],
       users: [user1, user2],
       current_turn_user: user1
-    game_user1 = game.game_users.find_by(user: user1)
-    game_user1.update(hand: %w[a a])
+    player1 = game.player(user1)
+    player2 = game.player(user2)
+    player1.update(hand: %w[a a])
     FactoryBot.create(:word, spelling: 'aa')
 
     result = MoveMaker.call \
       game: game,
       placements: [{ col: 0, row: 0, tile: 0 }, { col: 0, row: 1, tile: 1 }]
     game.reload
-    game_user1.reload
+    player1.reload
+    board = game.board
 
     assert(result)
-    assert_equal(['b'], game.tile_bag)            # Tiles get removed from bag
-    assert_equal(%w[b b], game_user1.hand)        # Hand gets updated
-    assert_equal('a', game.board[0][0])           # New tile on board
-    assert_equal('a', game.board[0][1])           # New tile on board
-    assert_equal(user2, game.current_turn_user)   # Passes turn
+    assert_equal(['b'], game.tile_bag)              # Tiles get removed from bag
+    assert_equal(%w[b b], player1.hand)             # Hand gets updated
+    assert_equal('a', board[0][0]['tile'])          # New tile gets placed
+    assert_equal('u', board[0][0]['rule'])          # Rule is unchanged
+    assert_equal(player1.id, board[0][0]['player']) # Correct player
+    assert_equal('a', board[0][1]['tile'])          # New tile gets placed
+    assert_nil(board[0][1]['rule'])                 # Rule is nil
+    assert_equal(player1.id, board[0][1]['player']) # Correct player
+    assert_equal(player2, game.current_player)      # Passes turn
   end
 
   test 'returns false for out of bounds moves and does not update records' do
@@ -36,23 +43,27 @@ class MoveMakerTest < ActiveSupport::TestCase
     FactoryBot.create(:word, spelling: 'd')
     game = FactoryBot.create \
       :game,
-      board: [['d', nil], [nil, nil]],
+      board: [[{ tile: 'd', rule: nil, player: nil }, nil], [nil, nil]],
       tile_bag: %w[b b b],
       users: [user1, user2],
       current_turn_user: user1
-    game_user1 = game.game_users.find_by(user: user1)
-    game_user1.update(hand: %w[a a c c])
+    player1 = game.player(user1)
+    player1.update(hand: %w[a a c c])
 
     result_out_of_bounds = MoveMaker.call \
       game: game,
       placements: [{ col: 2, row: 2, tile: 0 }]
     game.reload
-    game_user1.reload
+    player1.reload
+    board = game.board
 
     assert_not(result_out_of_bounds)
-    assert_equal([['d', nil], [nil, nil]], game.board)
-    assert_equal(%w[a a c c], game_user1.hand)
-    assert_equal(user1, game.current_turn_user)
+    assert_equal('d', board[0][0]['tile'])
+    assert_nil(board[0][1])
+    assert_nil(board[1][0])
+    assert_nil(board[1][1])
+    assert_equal(%w[a a c c], player1.hand)
+    assert_equal(player1, game.current_player)
   end
 
   test 'returns false for invalid words and does not update records' do
@@ -62,23 +73,27 @@ class MoveMakerTest < ActiveSupport::TestCase
     FactoryBot.create(:word, spelling: 'd')
     game = FactoryBot.create \
       :game,
-      board: [['d', nil], [nil, nil]],
+      board: [[{ tile: 'd', rule: nil, player: nil }, nil], [nil, nil]],
       tile_bag: %w[b b b],
       users: [user1, user2],
       current_turn_user: user1
-    game_user1 = game.game_users.find_by(user: user1)
-    game_user1.update(hand: %w[a a c c])
+    player1 = game.player(user1)
+    player1.update(hand: %w[a a c c])
 
     result_invalid_word = MoveMaker.call \
       game: game.reload,
       placements: [{ col: 1, row: 0, tile: 2 }]
     game.reload
-    game_user1.reload
+    player1.reload
+    board = game.board
 
     assert_not(result_invalid_word)
-    assert_equal([['d', nil], [nil, nil]], game.board)
-    assert_equal(%w[a a c c], game_user1.hand)
-    assert_equal(user1, game.current_turn_user)
+    assert_equal('d', board[0][0]['tile'])
+    assert_nil(board[0][1])
+    assert_nil(board[1][0])
+    assert_nil(board[1][1])
+    assert_equal(%w[a a c c], player1.hand)
+    assert_equal(player1, game.current_player)
   end
 
   test 'returns false for present board tiles and does not update records' do
@@ -88,23 +103,27 @@ class MoveMakerTest < ActiveSupport::TestCase
     FactoryBot.create(:word, spelling: 'd')
     game = FactoryBot.create \
       :game,
-      board: [['d', nil], [nil, nil]],
+      board: [[{ tile: 'd', rule: nil, player: nil }, nil], [nil, nil]],
       tile_bag: %w[b b b],
       users: [user1, user2],
       current_turn_user: user1
-    game_user1 = game.game_users.find_by(user: user1)
-    game_user1.update(hand: %w[a a c c])
+    player1 = game.player(user1)
+    player1.update(hand: %w[a a c c])
 
     result_tile_present = MoveMaker.call \
       game: game.reload,
       placements: [{ col: 0, row: 0, tile: 0 }]
     game.reload
-    game_user1.reload
+    player1.reload
+    board = game.board
 
     assert_not(result_tile_present)
-    assert_equal([['d', nil], [nil, nil]], game.board)
-    assert_equal(%w[a a c c], game_user1.hand)
-    assert_equal(user1, game.current_turn_user)
+    assert_equal('d', board[0][0]['tile'])
+    assert_nil(board[0][1])
+    assert_nil(board[1][0])
+    assert_nil(board[1][1])
+    assert_equal(%w[a a c c], player1.hand)
+    assert_equal(player1, game.current_player)
   end
 
   test 'returns false for non-existent hand tile and does not update records' do
@@ -114,22 +133,26 @@ class MoveMakerTest < ActiveSupport::TestCase
     FactoryBot.create(:word, spelling: 'd')
     game = FactoryBot.create \
       :game,
-      board: [['d', nil], [nil, nil]],
+      board: [[{ tile: 'd', rule: nil, player: nil }, nil], [nil, nil]],
       tile_bag: %w[b b b],
       users: [user1, user2],
       current_turn_user: user1
-    game_user1 = game.game_users.find_by(user: user1)
-    game_user1.update(hand: %w[a a c c])
+    player1 = game.player(user1)
+    player1.update(hand: %w[a a c c])
 
     result_non_existent_hand_tile = MoveMaker.call \
       game: game.reload,
       placements: [{ col: 0, row: 0, tile: 4 }]
     game.reload
-    game_user1.reload
+    player1.reload
+    board = game.board
 
     assert_not(result_non_existent_hand_tile)
-    assert_equal([['d', nil], [nil, nil]], game.board)
-    assert_equal(%w[a a c c], game_user1.hand)
-    assert_equal(user1, game.current_turn_user)
+    assert_equal('d', board[0][0]['tile'])
+    assert_nil(board[0][1])
+    assert_nil(board[1][0])
+    assert_nil(board[1][1])
+    assert_equal(%w[a a c c], player1.hand)
+    assert_equal(player1, game.current_player)
   end
 end

@@ -10,6 +10,7 @@ class MoveMaker
     # @return {Boolean} - True if successful, false otherwise
     def call(game:, placements:)
       @game = game
+      @board = game.board
       @placements = placements
       @current_player = @game.current_player
 
@@ -52,26 +53,32 @@ class MoveMaker
     # @param {Hash} placement - { col: Integer, row: Integer, tile: Integer }
     # @return {Boolean} - True if out of bounds, false otherwise
     def placement_out_of_bounds?(placement)
-      col = @game.board[placement[:col]]
+      col = @board[placement[:col]]
       col.nil? || col.length <= placement[:row]
     end
 
     # Given a tile placement, returns true if a tile is already present on the
     # board.
     #
-    # @param {Hash} placement - { col: Integer, row: Integer, tile: Integer }
+    # @param {Hash} placement - { col: Integer, row: Integer }
     # @return {Boolean} - True if board tile present, false otherwise
     def board_tile_present?(placement)
-      @game.board[placement[:col]][placement[:row]].present?
+      @board.dig(placement[:col], placement[:row], 'tile').present?
     end
 
     # Places tile in board.
     #
-    # @param {Hash} placement - { col: Integer, row: Integer, tile: Integer }
+    # @param {Hash} placement - { col: Integer, row: Integer }
     # @param {String} tile - The tile to place
     # @return {void}
     def place_tile(placement:, tile:)
-      @game.board[placement[:col]][placement[:row]] = tile
+      col = placement[:col]
+      row = placement[:row]
+      @board[col][row] ||= { rule: nil }
+      @board[col][row].symbolize_keys!
+      @board[col][row][:tile] = tile
+      @board[col][row][:player] = @current_player.id
+      @game.board = @board
     end
 
     # Attempt the transaction. We want to remove all `nil`s from the current
