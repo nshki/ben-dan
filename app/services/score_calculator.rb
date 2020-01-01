@@ -45,7 +45,7 @@ class ScoreCalculator
       words.each do |word|
         word.each do |tile|
           tile.symbolize_keys!
-          new_points += STANDARD_VALUES[tile[:tile].to_sym]
+          new_points += apply_tile_rules(tile)
         end
       end
 
@@ -53,6 +53,21 @@ class ScoreCalculator
 
       @player.score += new_points
       @player.save
+    end
+
+    # Given a tile, apply tile rules, if any.
+    #
+    # @param {Hash} tile - { rule: String }
+    # @return {Integer} - Points that the given tile counts for
+    def apply_tile_rules(tile)
+      points = STANDARD_VALUES[tile[:tile].to_sym]
+
+      if part_of_move?(tile)
+        points *= 2 if tile[:rule] == 'dl'
+        points *= 3 if tile[:rule] == 'tl'
+      end
+
+      points
     end
 
     # Given words and points, apply any applicable word point rules.
