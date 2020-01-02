@@ -21,12 +21,64 @@ class MoveMaker
         place_tile(placement: placement, tile: hand_tile)
       end
 
+      return false unless move_is_straight_without_gaps? && legal_opener?
+
       make_transaction
     rescue ActiveRecord::RecordInvalid
       false
     end
 
     private
+
+    # Checks if the move is in a straight line without any gaps.
+    #
+    # @return {Boolean} - True if line without gaps, false otherwise
+    def move_is_straight_without_gaps?
+      cols = @placements.map { |placement| placement[:col] }.sort
+      rows = @placements.map { |placement| placement[:row] }.sort
+      vert_line = cols.uniq.count == 1
+      horiz_line = rows.uniq.count == 1
+      return false unless vert_line || horiz_line
+
+      direction = vert_line ? :vert : :horiz
+      gapless?(cols: cols, rows: rows, direction: direction)
+    end
+
+    # Checks for the absence of gaps.
+    #
+    # @param {Array<Integer>} cols - Column indices
+    # @param {Array<Integer>} rows - Row indices
+    # @param {Symbol} direction - :vert | :horiz
+    # @return {Boolean} - True if gapless, false otherwise
+    def gapless?(cols:, rows:, direction:)
+      if direction == :vert
+        (rows.first..rows.last).each do |row|
+          return false if @board[cols.first][row].blank?
+        end
+      else
+        (cols.first..cols.last).each do |col|
+          return false if @board[col][rows.first].blank?
+        end
+      end
+
+      true
+    end
+
+    # Determines whether a move is a legal opener, determined by whether or not
+    # the starter tile has been filled.
+    #
+    # @return {Boolean} - True if legal, false otherwise
+    def legal_opener?
+      @board.each do |col|
+        col.each do |tile|
+          if tile.present? && tile[:rule] == 'start' && tile[:tile].present?
+            return true
+          end
+        end
+      end
+
+      false
+    end
 
     # Grabs a tile from the current player's hand and replaces it with a tile
     # from the tile bag.

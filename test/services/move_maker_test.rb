@@ -9,7 +9,12 @@ class MoveMakerTest < ActiveSupport::TestCase
     game = FactoryBot.create \
       :game,
       tile_bag: %w[b b b],
-      board: [[{ tile: nil, rule: 'u', player: nil }, nil]],
+      board: [
+        [
+          { tile: nil, rule: :u, player: nil },
+          { tile: nil, rule: :start, player: nil }
+        ]
+      ],
       users: [user1, user2],
       current_turn_user: user1
     player1 = game.player(user1)
@@ -31,7 +36,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     assert_equal('u', board[0][0]['rule'])          # Rule is unchanged
     assert_equal(player1.id, board[0][0]['player']) # Correct player
     assert_equal('a', board[0][1]['tile'])          # New tile gets placed
-    assert_nil(board[0][1]['rule'])                 # Rule is nil
+    assert_equal('start', board[0][1]['rule'])      # Rule is 'start'
     assert_equal(player1.id, board[0][1]['player']) # Correct player
     assert_equal(player2, game.current_player)      # Passes turn
   end
