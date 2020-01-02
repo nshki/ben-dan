@@ -36,6 +36,150 @@ class MoveMakerTest < ActiveSupport::TestCase
     assert_equal(player2, game.current_player)      # Passes turn
   end
 
+  test 'returns false for moves that have gaps and does not update records' do
+    user1 = FactoryBot.create(:user, username: 'User 1')
+    user2 = FactoryBot.create(:user, username: 'User 2')
+    game = FactoryBot.create \
+      :game,
+      tile_bag: %w[b b b],
+      board: [[nil, nil, nil]],
+      users: [user1, user2],
+      current_turn_user: user1
+    player1 = game.player(user1)
+    player1.update(hand: %w[a a])
+    FactoryBot.create(:word, spelling: 'aa')
+
+    result_with_gap = MoveMaker.call \
+      game: game,
+      placements: [{ col: 0, row: 0, tile: 0 }, { col: 0, row: 2, tile: 1 }]
+    game.reload
+    player1.reload
+    board = game.board
+
+    assert_not(result_with_gap)
+    assert_nil(board[0][0])
+    assert_nil(board[0][1])
+    assert_equal(%w[a a], player1.hand)
+    assert_equal(player1, game.current_player)
+  end
+
+  test 'returns false for non-straight moves and does not update records' do
+    user1 = FactoryBot.create(:user, username: 'User 1')
+    user2 = FactoryBot.create(:user, username: 'User 2')
+    game = FactoryBot.create \
+      :game,
+      tile_bag: %w[b b b],
+      board: [[nil, nil], [nil, nil]],
+      users: [user1, user2],
+      current_turn_user: user1
+    player1 = game.player(user1)
+    player1.update(hand: %w[a a])
+    FactoryBot.create(:word, spelling: 'aa')
+
+    result_not_straight = MoveMaker.call \
+      game: game,
+      placements: [{ col: 0, row: 0, tile: 0 }, { col: 1, row: 1, tile: 1 }]
+    game.reload
+    player1.reload
+    board = game.board
+
+    assert_not(result_not_straight)
+    assert_nil(board[0][0])
+    assert_nil(board[0][1])
+    assert_nil(board[1][0])
+    assert_nil(board[1][1])
+    assert_equal(%w[a a], player1.hand)
+    assert_equal(player1, game.current_player)
+  end
+
+  test 'returns false for disconnected moves and does not update records' do
+    user1 = FactoryBot.create(:user, username: 'User 1')
+    user2 = FactoryBot.create(:user, username: 'User 2')
+    game = FactoryBot.create \
+      :game,
+      tile_bag: %w[b b b],
+      board: [[nil, nil], [nil, nil]],
+      users: [user1, user2],
+      current_turn_user: user1
+    player1 = game.player(user1)
+    player1.update(hand: %w[a a])
+    FactoryBot.create(:word, spelling: 'aa')
+
+    result_disconnected = MoveMaker.call \
+      game: game,
+      placements: [{ col: 1, row: 1, tile: 0 }]
+    game.reload
+    player1.reload
+    board = game.board
+
+    assert_not(result_disconnected)
+    assert_nil(board[0][0])
+    assert_nil(board[0][1])
+    assert_nil(board[1][0])
+    assert_nil(board[1][1])
+    assert_equal(%w[a a], player1.hand)
+    assert_equal(player1, game.current_player)
+  end
+
+  test 'returns false for illegal opening moves and does not update records' do
+    user1 = FactoryBot.create(:user, username: 'User 1')
+    user2 = FactoryBot.create(:user, username: 'User 2')
+    game = FactoryBot.create \
+      :game,
+      tile_bag: %w[b b b],
+      board: [[nil, nil], [nil, { tile: nil, rule: :start, player: nil }]],
+      users: [user1, user2],
+      current_turn_user: user1
+    player1 = game.player(user1)
+    player1.update(hand: %w[a a])
+    FactoryBot.create(:word, spelling: 'aa')
+
+    result_illegal_opener = MoveMaker.call \
+      game: game,
+      placements: [{ col: 0, row: 0, tile: 0 }, { col: 0, row: 1, tile: 1 }]
+    game.reload
+    player1.reload
+    board = game.board
+
+    assert_not(result_illegal_opener)
+    assert_nil(board[0][0])
+    assert_nil(board[0][1])
+    assert_nil(board[1][0])
+    assert_nil(board[1][1]['tile'])
+    assert_equal(%w[a a], player1.hand)
+    assert_equal(player1, game.current_player)
+  end
+
+  test 'returns true for legal opening moves and updates records' do
+    user1 = FactoryBot.create(:user, username: 'User 1')
+    user2 = FactoryBot.create(:user, username: 'User 2')
+    game = FactoryBot.create \
+      :game,
+      tile_bag: %w[b b b],
+      board: [[nil, nil], [nil, { tile: nil, rule: :start, player: nil }]],
+      users: [user1, user2],
+      current_turn_user: user1
+    player1 = game.player(user1)
+    player1.update(hand: %w[a a])
+    player2 = game.player(user2)
+    FactoryBot.create(:word, spelling: 'aa')
+
+    result_legal_opener = MoveMaker.call \
+      game: game,
+      placements: [{ col: 1, row: 0, tile: 0 }, { col: 1, row: 1, tile: 1 }]
+    game.reload
+    player1.reload
+    board = game.board
+
+    assert(result_legal_opener)
+    assert_nil(board[0][0])
+    assert_nil(board[0][1])
+    assert_equal('a', board[1][0]['tile'])
+    assert_equal('a', board[1][1]['tile'])
+    assert_equal(%w[b b], player1.hand)
+    assert_equal(player2, game.current_player)
+  end
+
   test 'returns false for out of bounds moves and does not update records' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
