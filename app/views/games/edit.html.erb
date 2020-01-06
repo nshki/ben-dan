@@ -2,9 +2,10 @@
   <% @game.board.each do |col| %>
     <div class="board__col">
       <% col.each do |tile| %>
-        <div class="board__tile">
-          <%= tile %>
-        </div><!-- .board__tile -->
+        <% presenter = TilePresenter.new(tile: tile, bem_base: 'board__tile') %>
+        <div class="<%= presenter.css_classes %>">
+          <%= presenter.content %>
+        </div>
       <% end %>
     </div><!-- .board__col -->
   <% end %>
