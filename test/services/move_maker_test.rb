@@ -6,21 +6,20 @@ class MoveMakerTest < ActiveSupport::TestCase
   test 'returns true for a legal move and updates records' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
+    FactoryBot.create(:word, spelling: 'a')
+    FactoryBot.create(:word, spelling: 'aa')
     game = FactoryBot.create \
       :game,
       tile_bag: %w[b b b],
       board: [
-        [
-          { tile: nil, rule: :u, player: nil },
-          { tile: nil, rule: :start, player: nil }
-        ]
+        [nil, nil],
+        [{ tile: 'a', rule: :start, player: nil }, nil]
       ],
       users: [user1, user2],
       current_turn_user: user1
     player1 = game.player(user1)
     player2 = game.player(user2)
     player1.update(hand: %w[a a])
-    FactoryBot.create(:word, spelling: 'aa')
 
     result = MoveMaker.call \
       game: game,
@@ -32,12 +31,13 @@ class MoveMakerTest < ActiveSupport::TestCase
     assert(result)
     assert_equal(['b'], game.tile_bag)              # Tiles get removed from bag
     assert_equal(%w[b b], player1.hand)             # Hand gets updated
-    assert_equal('a', board[0][0]['tile'])          # New tile gets placed
-    assert_equal('u', board[0][0]['rule'])          # Rule is unchanged
-    assert_equal(player1.id, board[0][0]['player']) # Correct player
-    assert_equal('a', board[0][1]['tile'])          # New tile gets placed
-    assert_equal('start', board[0][1]['rule'])      # Rule is 'start'
-    assert_equal(player1.id, board[0][1]['player']) # Correct player
+    assert_equal('a', board[0][0]['tile'])          # 1st tile gets placed
+    assert_equal(player1.id, board[0][0]['player']) # 1st tile from player
+    assert_equal('a', board[0][1]['tile'])          # 2nd tile gets placed
+    assert_equal(player1.id, board[0][1]['player']) # 2nd tile from player
+    assert_equal('a', board[1][0]['tile'])          # Old tile is unchanged
+    assert_equal('start', board[1][0]['rule'])      # Old rule is unchanged
+    assert_nil(board[1][0]['player'])               # Old player is unchanged
     assert_equal(player2, game.current_player)      # Passes turn
   end
 
@@ -47,7 +47,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     game = FactoryBot.create \
       :game,
       tile_bag: %w[b b b],
-      board: [[nil, nil, nil]],
+      board: [[{ tile: nil, rule: :start, player: nil }, nil, nil]],
       users: [user1, user2],
       current_turn_user: user1
     player1 = game.player(user1)
@@ -62,7 +62,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     board = game.board
 
     assert_not(result_with_gap)
-    assert_nil(board[0][0])
+    assert_nil(board[0][0]['tile'])
     assert_nil(board[0][1])
     assert_equal(%w[a a], player1.hand)
     assert_equal(player1, game.current_player)
@@ -74,7 +74,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     game = FactoryBot.create \
       :game,
       tile_bag: %w[b b b],
-      board: [[nil, nil], [nil, nil]],
+      board: [[{ tile: nil, rule: :start, player: nil }, nil], [nil, nil]],
       users: [user1, user2],
       current_turn_user: user1
     player1 = game.player(user1)
@@ -89,7 +89,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     board = game.board
 
     assert_not(result_not_straight)
-    assert_nil(board[0][0])
+    assert_nil(board[0][0]['tile'])
     assert_nil(board[0][1])
     assert_nil(board[1][0])
     assert_nil(board[1][1])
@@ -103,7 +103,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     game = FactoryBot.create \
       :game,
       tile_bag: %w[b b b],
-      board: [[nil, nil], [nil, nil]],
+      board: [[{ tile: nil, rule: :start, player: nil }, nil], [nil, nil]],
       users: [user1, user2],
       current_turn_user: user1
     player1 = game.player(user1)
@@ -112,13 +112,13 @@ class MoveMakerTest < ActiveSupport::TestCase
 
     result_disconnected = MoveMaker.call \
       game: game,
-      placements: [{ col: 1, row: 1, tile: 0 }]
+      placements: [{ col: 0, row: 0, tile: 0 }, { col: 1, row: 1, tile: 1 }]
     game.reload
     player1.reload
     board = game.board
 
     assert_not(result_disconnected)
-    assert_nil(board[0][0])
+    assert_nil(board[0][0]['tile'])
     assert_nil(board[0][1])
     assert_nil(board[1][0])
     assert_nil(board[1][1])

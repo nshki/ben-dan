@@ -21,7 +21,7 @@ class MoveMaker
         place_tile(placement: placement, tile: hand_tile)
       end
 
-      return false unless move_is_straight_without_gaps? && legal_opener?
+      return false unless straight_no_gaps? && opener_or_touching_tile?
 
       make_transaction
     rescue ActiveRecord::RecordInvalid
@@ -33,7 +33,7 @@ class MoveMaker
     # Checks if the move is in a straight line without any gaps.
     #
     # @return {Boolean} - True if line without gaps, false otherwise
-    def move_is_straight_without_gaps?
+    def straight_no_gaps?
       cols = @placements.map { |placement| placement[:col] }.sort
       rows = @placements.map { |placement| placement[:row] }.sort
       vert_line = cols.uniq.count == 1
@@ -64,20 +64,70 @@ class MoveMaker
       true
     end
 
-    # Determines whether a move is a legal opener, determined by whether or not
-    # the starter tile has been filled.
+    # Determines whether the move is an opener or is touching a tile.
     #
-    # @return {Boolean} - True if legal, false otherwise
-    def legal_opener?
+    # @return {Boolean} - True or false
+    def opener_or_touching_tile?
+      opener? || (started? && touching_tile?)
+    end
+
+    # Determines whether the move is an opener or not.
+    #
+    # @return {Boolean} - True if opener, false otherwise
+    def opener?
+      @placements.each do |placement|
+        col = placement[:col]
+        row = placement[:row]
+        return true if @board[col][row]['rule'] == 'start'
+      end
+
+      false
+    end
+
+    # Determines whether or not the starter tile has been filled.
+    #
+    # @return {Boolean} - True if filled, false otherwise
+    def started?
       @board.each do |col|
         col.each do |tile|
-          if tile.present? && tile[:rule] == 'start' && tile[:tile].present?
+          if tile.present? && tile['rule'] == 'start' && tile['tile'].present?
             return true
           end
         end
       end
 
       false
+    end
+
+    # Determines whether the move is touching an existing tile.
+    #
+    # @return {Boolean} - True if touching an existing tile, false otherwise
+    def touching_tile?
+      @placements.each do |placement|
+        col = placement[:col]
+        row = placement[:row]
+        top = tile_present_at?(col: col, row: row - 1)
+        left = tile_present_at?(col: col - 1, row: row)
+        right = tile_present_at?(col: col + 1, row: row)
+        bottom = tile_present_at?(col: col, row: row + 1)
+        return true if top || bottom || left || right
+      end
+
+      false
+    end
+
+    # Determines whether there is a tile present at the given coordinates.
+    #
+    # @param {Integer} col - Column number
+    # @param {Integer} row - Row number
+    # @return {Boolean} - True if there is a tile present, false otherwise
+    def tile_present_at?(col:, row:)
+      return true if col.negative? || row.negative?
+
+      return true if col >= @board.count || row >= @board.first.count
+
+      tile = @board[col][row]
+      tile.present? && tile['tile'].present?
     end
 
     # Grabs a tile from the current player's hand and replaces it with a tile
@@ -127,9 +177,8 @@ class MoveMaker
       col = placement[:col]
       row = placement[:row]
       @board[col][row] ||= { rule: nil }
-      @board[col][row].symbolize_keys!
-      @board[col][row][:tile] = tile
-      @board[col][row][:player] = @current_player.id
+      @board[col][row]['tile'] = tile
+      @board[col][row]['player'] = @current_player.id
       @game.board = @board
     end
 
