@@ -110,7 +110,7 @@ class ScoreCalculator
 
     # Find new words formed by the move.
     #
-    # @return {Array<Array<Hash>>} - [[{ <tile hash }]]
+    # @return {Array<Array<Hash>>} - [[{ <tile hash> }]]
     def new_words
       words = []
       @placements.each do |placement|
