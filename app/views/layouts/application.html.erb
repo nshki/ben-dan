@@ -15,15 +15,33 @@
   </head>
 
   <body>
-    <nav>
-      <% if signed_in? %>
-        <%= link_to('Logout', session_path(-1), method: :delete) %>
-        <%= link_to('Games', games_path) %>
-      <% else %>
-        <%= link_to('Login', new_session_path) %>
-      <% end %>
-    </nav>
+    <div class="app">
+      <aside class="app__sidebar">
+        <h1 class="logo">
+          <%= link_to('Ben Dan', root_path) %>
+        </h1>
 
-    <%= yield %>
+        <menu class="menu">
+          <ul class="menu__items">
+            <% if signed_in? %>
+              <li class="menu__item">
+                <%= link_to('My Games', games_path) %>
+              </li><!-- .menu__item -->
+              <li class="menu__item">
+                <%= link_to('Logout', session_path(-1), method: :delete) %>
+              </li><!-- .menu__item -->
+            <% else %>
+              <li class="menu__item">
+                <%= link_to('Login', new_session_path) %>
+              </li><!-- .menu__item -->
+            <% end %>
+          </ul><!-- .menu__items -->
+        </menu><!-- .menu -->
+      </aside><!-- .app__sidebar -->
+
+      <main class="app__main">
+        <%= yield %>
+      </main><!-- .app__main -->
+    </div><!-- .app -->
   </body>
 </html>

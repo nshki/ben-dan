@@ -1,86 +1,14 @@
-//= require_tree .
-//= require_self
+@import './layouts/layout';
+
+@import './components/board';
+@import './components/menu';
 
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
 body {
+  margin: 0;
+  padding: 0;
   font-family: sans-serif;
-}
-
-.board {
-  display: inline-flex;
-  flex-direction: row;
-}
-
-.board__col {
-  display: flex;
-  flex-direction: column;
-}
-
-.board__tile {
-  background-color: #eee;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 50px;
-  height: 50px;
-  border: 1px solid #fff;
-  border-radius: 20%;
-  position: relative;
-}
-
-.board__tile--start {
-  background-color: #aaa;
-}
-
-.board__tile--dl,
-.board__tile--tl,
-.board__tile--dw,
-.board__tile--tw {
-  &:before {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    font-weight: bold;
-    color: rgba(#fff, 0.7);
-  }
-}
-
-.board__tile--dl {
-  background-color: #f2cc0c;
-
-  &:before {
-    content: 'dl';
-  }
-}
-
-.board__tile--tl {
-  background-color: #3940bf;
-
-  &:before {
-    content: 'tl';
-  }
-}
-
-.board__tile--dw {
-  background-color: #ff9060;
-
-  &:before {
-    content: 'dw';
-  }
-}
-
-.board__tile--tw {
-  background-color: #c0d904;
-
-  &:before {
-    content: 'tw';
-  }
 }

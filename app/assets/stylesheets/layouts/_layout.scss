@@ -1,0 +1,35 @@
+.logo {
+  text-transform: lowercase;
+  font-weight: bold;
+  font-size: 2rem;
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .app__sidebar & {
+    margin: 1rem 1.5rem;
+    text-shadow: 0.15em 0.15em 0 #fff;
+    transition: color 0.25s ease-in-out;
+
+    &:hover {
+      color: #937b00;
+    }
+  }
+}
+
+.app {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.app__sidebar {
+  background-color: #fff4ba;
+  width: 15rem;
+  min-height: 100vh;
+  margin: 0;
+  padding: 1rem 0;
+  color: #d9b500;
+}
