@@ -6,6 +6,32 @@
   padding-bottom: 7rem;
 }
 
+.game-ui__scores {
+  display: flex;
+  flex-direction: row;
+}
+
+.game-ui__score {
+  padding: 1rem 2rem;
+  text-align: center;
+
+  &--active {
+    background-color: $green;
+  }
+}
+
+.game-ui__score__name {
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+}
+
+.game-ui__score__points {
+  margin: 0;
+  padding: 0;
+  font-size: 2rem;
+}
+
 .game-ui__hand {
   background-color: rgba(#fff, 0.7);
   position: fixed;
@@ -15,6 +41,7 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
+  margin: 0;
   padding: 1rem;
 
   .tile {

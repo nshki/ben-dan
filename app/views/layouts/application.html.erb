@@ -15,31 +15,31 @@
   </head>
 
   <body>
-    <menu class="menu">
-      <h1 class="menu__logo">
+    <nav class="nav">
+      <h1 class="nav__logo">
         <%= link_to('Ben Dan', root_path) %>
-      </h1><!-- .menu__logo -->
+      </h1><!-- .nav__logo -->
 
-      <ul class="menu__items">
+      <ul class="nav__items">
         <% if signed_in? %>
-          <li class="menu__item">
+          <li class="nav__item">
             <%= link_to('Games', games_path) %>
-          </li><!-- .menu__item -->
+          </li><!-- .nav__item -->
         <% end %>
-      </ul><!-- .menu__items -->
+      </ul><!-- .nav__items -->
 
-      <ul class="menu__items">
+      <ul class="nav__items">
         <% if signed_in? %>
-          <li class="menu__item">
+          <li class="nav__item">
             <%= link_to('Logout', session_path(-1), method: :delete) %>
-          </li><!-- .menu__item -->
+          </li><!-- .nav__item -->
         <% else %>
-          <li class="menu__item">
+          <li class="nav__item">
             <%= link_to('Login', new_session_path) %>
-          </li><!-- .menu__item -->
+          </li><!-- .nav__item -->
         <% end %>
-      </ul><!-- .menu__items -->
-    </menu><!-- .menu -->
+      </ul><!-- .nav__items -->
+    </nav><!-- .nav -->
 
     <%= yield %>
   </body>

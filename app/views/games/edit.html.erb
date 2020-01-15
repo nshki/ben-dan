@@ -1,4 +1,24 @@
 <div class="game-ui">
+  <div class="game-ui__scores">
+    <% @game.game_users.each do |player| %>
+      <%
+        presenter = ScorePresenter.new \
+          player: player,
+          game: @game,
+          bem_base: 'game-ui__score'
+      %>
+      <div class="<%= presenter.parent_css_classes %>">
+        <h1 class="<%= presenter.name_css_classes %>">
+          <%= presenter.name %>
+        </h1>
+
+        <h2 class="<%= presenter.score_css_classes %>">
+          <%= presenter.score %>
+        </h2>
+      </div>
+    <% end %>
+  </div><!-- .game-ui__scores -->
+
   <div class="board">
     <% @game.board.each do |col| %>
       <div class="board__col">
@@ -12,11 +32,11 @@
     <% end %>
   </div><!-- .board -->
 
-  <div class="game-ui__hand">
+  <menu class="game-ui__hand">
     <% @hand.each do |tile| %>
       <div class="tile">
         <%= tile %>
       </div><!-- .tile -->
     <% end %>
-  </div><!-- .game-ui__hand -->
+  </menu><!-- .game-ui__hand -->
 </div><!-- .game-ui -->
