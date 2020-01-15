@@ -25,6 +25,7 @@ class GamesController < ApplicationController
   # @route GET /games/:id/edit (edit_game)
   def edit
     @game = Game.find_by(id: params[:id])
+    @hand = @game.player(current_user).hand
   end
 
   # @route PATCH /games/:id (game)

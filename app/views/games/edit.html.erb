@@ -1,12 +1,22 @@
-<div class="board">
-  <% @game.board.each do |col| %>
-    <div class="board__col">
-      <% col.each do |tile| %>
-        <% presenter = TilePresenter.new(tile: tile, bem_base: 'board__tile') %>
-        <div class="<%= presenter.css_classes %>">
-          <%= presenter.content %>
-        </div>
-      <% end %>
-    </div><!-- .board__col -->
-  <% end %>
-</div><!-- .board -->
+<div class="game-ui">
+  <div class="board">
+    <% @game.board.each do |col| %>
+      <div class="board__col">
+        <% col.each do |tile| %>
+          <% presenter = TilePresenter.new(tile: tile, bem_base: 'board__tile') %>
+          <div class="<%= presenter.css_classes %>">
+            <%= presenter.content %>
+          </div>
+        <% end %>
+      </div><!-- .board__col -->
+    <% end %>
+  </div><!-- .board -->
+
+  <div class="game-ui__hand">
+    <% @hand.each do |tile| %>
+      <div class="tile">
+        <%= tile %>
+      </div><!-- .tile -->
+    <% end %>
+  </div><!-- .game-ui__hand -->
+</div><!-- .game-ui -->
