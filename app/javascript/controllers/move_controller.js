@@ -25,12 +25,13 @@ export default class extends Controller {
    */
   placeTile(e) {
     const tile = this.selectedTile();
-    if (!tile) { return; }
+    if (!tile || this.hasTile(e.target)) { return; }
 
     tile.classList.remove('selected');
     e.target.appendChild(tile);
     this.boardTarget.classList.remove('placeable');
     this.controlTargets.map((control) => control.disabled = false);
+    // this.addToForm({ tile, boardTile: e.target });
   }
 
   /**
@@ -42,6 +43,29 @@ export default class extends Controller {
     this.boardTarget.classList.remove('placeable');
     this.tileTargets.map((tile) => this.handTarget.appendChild(tile));
     this.controlTargets.map((control) => control.disabled = true);
+  }
+
+  // Private
+
+  /**
+   * Determines if the given element already has a tile.
+   *
+   * @param {Element} el - DOM element
+   * @return {Boolean} - True if already has tile, false otherwise
+   */
+  hasTile(el) {
+    if (!el.classList.contains('board__tile')) { return true; }
+
+    return el.children.length > 0;
+  }
+
+  /**
+   * Deselects all tiles in hand.
+   *
+   * @return {void}
+   */
+  deselectTiles() {
+    this.tileTargets.map((tile) => tile.classList.remove('selected'));
   }
 
   /**
@@ -72,14 +96,5 @@ export default class extends Controller {
     return this.tileTargets.find((tile) => {
       return tile.classList.contains('selected');
     });
-  }
-
-  /**
-   * Deselects all tiles in hand.
-   *
-   * @return {void}
-   */
-  deselectTiles() {
-    this.tileTargets.map((tile) => tile.classList.remove('selected'));
   }
 };
