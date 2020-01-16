@@ -1,7 +1,7 @@
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
-  static targets = ['board', 'tile', 'hand', 'control'];
+  static targets = ['board', 'tile', 'hand', 'control', 'form'];
 
   /**
    * Selects a tile from the player's hand.
@@ -31,7 +31,7 @@ export default class extends Controller {
     e.target.appendChild(tile);
     this.boardTarget.classList.remove('placeable');
     this.controlTargets.map((control) => control.disabled = false);
-    // this.addToForm({ tile, boardTile: e.target });
+    this.addToForm({ tile, boardTile: e.target });
   }
 
   /**
@@ -43,9 +43,26 @@ export default class extends Controller {
     this.boardTarget.classList.remove('placeable');
     this.tileTargets.map((tile) => this.handTarget.appendChild(tile));
     this.controlTargets.map((control) => control.disabled = true);
+    this.formTarget.innerHTML = '';
   }
 
   // Private
+
+  /**
+   * Adds the given tile to the hidden form.
+   *
+   * @param {Element} tile - Placed tile element
+   * @param {Element} boardTile - Space in which tile was placed
+   */
+  addToForm({ tile, boardTile }) {
+    const { col, row } = boardTile.dataset;
+    const { index } = tile.dataset;
+    let data = document.createElement('input');
+    data.type = 'hidden';
+    data.name = 'placements[]';
+    data.value = `${col}:${row}:${index}`;
+    this.formTarget.appendChild(data);
+  }
 
   /**
    * Determines if the given element already has a tile.

@@ -32,7 +32,13 @@ class GamesController < ApplicationController
   # @route PATCH /games/:id (game)
   # @route PUT /games/:id (game)
   def update
+    placements =
+      params[:placements].map do |placement|
+        tokens = placement.split(':').map(&:to_i)
+        { col: tokens.first, row: tokens.second, tile: tokens.third }
+      end
     MoveMaker.call(game: @game, placements: placements)
+    redirect_to(edit_game_path(@game))
   end
 
   private

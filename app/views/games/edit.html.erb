@@ -24,17 +24,23 @@
   </div><!-- .game-ui__scores -->
 
   <div class="board" data-target="move.board">
-    <% @game.board.each do |col| %>
+    <% @game.board.each_with_index do |col, x| %>
       <div class="board__col">
-        <% col.each do |tile| %>
+        <% col.each_with_index do |tile, y| %>
           <%
             presenter = TilePresenter.new(tile: tile, bem_base: 'board__tile')
           %>
           <div
             class="<%= presenter.css_classes %>"
+            data-col="<%= x %>"
+            data-row="<%= y %>"
             data-action="click->move#placeTile"
           >
-            <%= presenter.content %>
+            <% if presenter.content.present? %>
+              <div class="tile">
+                <%= presenter.content %>
+              </div><!-- .tile -->
+            <% end %>
           </div>
         <% end %>
       </div><!-- .board__col -->
@@ -43,19 +49,21 @@
 
   <menu class="game-ui__hand">
     <div class="game-ui__hand__tiles" data-target="move.hand">
-      <% @current_player.hand.each do |tile| %>
+      <% @current_player.hand.each_with_index do |tile, index| %>
         <div
           class="tile"
           data-action="click->move#selectTile"
           data-target="move.tile"
+          data-index="<%= index %>"
         >
           <%= tile %>
         </div><!-- .tile -->
       <% end %>
     </div><!-- .game-ui__hand__tiles -->
 
-    <%= form_with(model: @game, method: :patch, class: 'game-ui__form') do |f| %>
-      <div class="game-ui__form__data"></div>
+    <%= form_with(model: @game, class: 'game-ui__form') do |f| %>
+      <div class="game-ui__form__data" data-target="move.form">
+      </div><!-- .game-ui__form__data -->
 
       <div class="game-ui__form__controls">
         <button
@@ -66,6 +74,7 @@
         >
           Undo
         </button>
+
         <%=
           f.submit \
             'Move!',
