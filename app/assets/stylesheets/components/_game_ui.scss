@@ -41,6 +41,7 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
+  align-items: center;
   margin: 0;
   padding: 1rem;
 
@@ -58,5 +59,61 @@
     &.selected {
       transform: translate3d(0, -0.75rem, 0);
     }
+  }
+}
+
+.game-ui__hand__tiles {
+  display: flex;
+  flex-direction: row;
+}
+
+.game-ui__form {
+  margin: 0 1rem;
+}
+
+.game-ui__form__data {
+  display: none;
+}
+
+.game-ui__form__controls {
+  display: flex;
+  flex-direction: row;
+}
+
+.game-ui__form__button {
+  background-color: $green;
+  outline: none;
+  box-shadow: inset -5px -5px 5px darken($green, 5%);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  text-shadow: 1px 1px 3px darken($green, 20%);
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  & + & {
+    margin-left: 0.5rem;
+  }
+
+  &:hover {
+    background-color: lighten($green, 2%);
+  }
+
+  &--alt {
+    background-color: lighten($blue, 5%);
+    box-shadow: inset -5px -5px 5px $blue;
+    text-shadow: 1px 1px 3px darken($blue, 5%);
+
+    &:hover {
+      background-color: lighten($blue, 10%);
+    }
+  }
+
+  &[disabled] {
+    opacity: 0.8;
+    filter: saturate(0);
+    cursor: not-allowed;
   }
 }

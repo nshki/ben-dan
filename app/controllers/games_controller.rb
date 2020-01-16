@@ -3,6 +3,7 @@
 # Handles game actions.
 class GamesController < ApplicationController
   before_action :authenticate_user
+  before_action :set_game, only: %i[edit update]
 
   # @route GET / (root)
   # @route GET /games (games)
@@ -24,12 +25,22 @@ class GamesController < ApplicationController
 
   # @route GET /games/:id/edit (edit_game)
   def edit
-    @game = Game.find_by(id: params[:id])
     @current_player = @game.player(current_user)
     @move_active = @game.current_player == @current_player
   end
 
   # @route PATCH /games/:id (game)
   # @route PUT /games/:id (game)
-  def update; end
+  def update
+    MoveMaker.call(game: @game, placements: placements)
+  end
+
+  private
+
+  # Stores the current game as an instance variable.
+  #
+  # @return {void}
+  def set_game
+    @game = Game.find_by(id: params[:id])
+  end
 end

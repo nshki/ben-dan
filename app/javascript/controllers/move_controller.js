@@ -1,7 +1,7 @@
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
-  static targets = ['board', 'tile'];
+  static targets = ['board', 'tile', 'hand', 'control'];
 
   /**
    * Selects a tile from the player's hand.
@@ -10,7 +10,7 @@ export default class extends Controller {
    * @return {void}
    */
   selectTile(e) {
-    if (this.notMyTurn()) { return; }
+    if (this.notMyTurn() || this.notInHand(e.target)) { return; }
 
     this.deselectTiles();
     e.target.classList.add('selected');
@@ -30,6 +30,18 @@ export default class extends Controller {
     tile.classList.remove('selected');
     e.target.appendChild(tile);
     this.boardTarget.classList.remove('placeable');
+    this.controlTargets.map((control) => control.disabled = false);
+  }
+
+  /**
+   * Bring all tiles back to the hand.
+   *
+   * @return {void}
+   */
+  undo() {
+    this.boardTarget.classList.remove('placeable');
+    this.tileTargets.map((tile) => this.handTarget.appendChild(tile));
+    this.controlTargets.map((control) => control.disabled = true);
   }
 
   /**
@@ -39,6 +51,16 @@ export default class extends Controller {
    */
   notMyTurn() {
     return this.data.get('active') === 'false';
+  }
+
+  /**
+   * Returns whether the given element is in the hand.
+   *
+   * @param {Element} el - DOM element
+   * @return {Boolean} - True if in hand, false otherwise
+   */
+  notInHand(el) {
+    return !el.parentNode.classList.contains('game-ui__hand__tiles');
   }
 
   /**

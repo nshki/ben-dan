@@ -42,14 +42,38 @@
   </div><!-- .board -->
 
   <menu class="game-ui__hand">
-    <% @current_player.hand.each do |tile| %>
-      <div
-        class="tile"
-        data-action="click->move#selectTile"
-        data-target="move.tile"
-      >
-        <%= tile %>
-      </div><!-- .tile -->
+    <div class="game-ui__hand__tiles" data-target="move.hand">
+      <% @current_player.hand.each do |tile| %>
+        <div
+          class="tile"
+          data-action="click->move#selectTile"
+          data-target="move.tile"
+        >
+          <%= tile %>
+        </div><!-- .tile -->
+      <% end %>
+    </div><!-- .game-ui__hand__tiles -->
+
+    <%= form_with(model: @game, method: :patch, class: 'game-ui__form') do |f| %>
+      <div class="game-ui__form__data"></div>
+
+      <div class="game-ui__form__controls">
+        <button
+          class="game-ui__form__button game-ui__form__button--alt"
+          data-action="click->move#undo"
+          data-target="move.control"
+          disabled="disabled"
+        >
+          Undo
+        </button>
+        <%=
+          f.submit \
+            'Move!',
+            disabled: true,
+            class: 'game-ui__form__button',
+            data: { target: 'move.control' }
+        %>
+      </div><!-- .game-ui__form__controls -->
     <% end %>
   </menu><!-- .game-ui__hand -->
 </div><!-- .game-ui -->
