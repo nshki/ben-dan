@@ -57,6 +57,19 @@ class GameTest < ActiveSupport::TestCase
     assert(tile_bag_letters.valid?)
   end
 
+  test 'validates a single character opener' do
+    FactoryBot.create(:word, spelling: 'b')
+    invalid_char = FactoryBot.build \
+      :game,
+      board: [[{ tile: 'a', rule: :start, player: nil }]]
+    valid_char = FactoryBot.build \
+      :game,
+      board: [[{ tile: 'b', rule: :start, player: nil }]]
+
+    assert_not(invalid_char.valid?)
+    assert(valid_char.valid?)
+  end
+
   test 'can pull random tiles from tile bag' do
     game = FactoryBot.create(:game, tile_bag: %w[a b c])
 

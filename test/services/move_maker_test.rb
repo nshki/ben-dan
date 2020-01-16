@@ -126,7 +126,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     assert_equal(player1, game.current_player)
   end
 
-  test 'returns false for illegal opening moves and does not update records' do
+  test 'returns false if start tile not filled and does not update records' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
     game = FactoryBot.create \

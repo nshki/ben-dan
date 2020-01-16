@@ -23,6 +23,7 @@ class Game < ApplicationRecord
   validate :validate_board_structure
   validate :validate_board_words
   validate :validate_tile_bag
+  validate :validate_single_char_opener
 
   before_update :pass_turn, if: :board_changed?
 
@@ -142,6 +143,29 @@ class Game < ApplicationRecord
     end
 
     [col_words, row_words]
+  end
+
+  # Validates a single character opening move.
+  #
+  # @return {void}
+  def validate_single_char_opener
+    tiles = placed_tiles
+    unless tiles.present? && tiles.count == 1 && tiles.first['rule'] == 'start'
+      return
+    end
+
+    word = tiles.first['tile']
+    errors.add(:board, 'invalid word') if Word.find_by(spelling: word).blank?
+  rescue StandardError
+    # This is in case the board isn't a 2D array, causing "not array" errors.
+    nil
+  end
+
+  # Returns all placed tiles on the board.
+  #
+  # @return {Array<Hash>} - Array of tile hashes
+  def placed_tiles
+    board&.flatten&.compact&.select { |tile| tile['tile'].present? }
   end
 
   # Validates each word in the given string.
