@@ -1,6 +1,7 @@
 <div
   class="game-ui"
   data-controller="move"
+  data-finished="<%= @game.finished?.to_s %>"
   data-move-active="<%= @move_active.to_s %>"
 >
   <div class="game-ui__scores">

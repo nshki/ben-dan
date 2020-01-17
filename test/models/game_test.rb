@@ -81,4 +81,24 @@ class GameTest < ActiveSupport::TestCase
     assert_equal(2, game.tile_bag.count)
     assert_not(game.tile_bag.include?(tiles.first))
   end
+
+  test '#finished? determines when the game is finished' do
+    user1 = FactoryBot.create(:user, u: '1')
+    user2 = FactoryBot.create(:user, u: '2')
+    game_with_not_empty_bag =
+      FactoryBot.create(:game, tile_bag: ['a'], users: [user1, user2])
+    game_with_not_empty_bag.game_users.each { |player| player.update(hand: []) }
+    game_with_not_empty_hands =
+      FactoryBot.create(:game, tile_bag: [], users: [user1, user2])
+    game_with_not_empty_hands.game_users.each do |player|
+      player.update(hand: ['a'])
+    end
+    finished_game =
+      FactoryBot.create(:game, tile_bag: [], users: [user1, user2])
+    finished_game.game_users.each { |player| player.update(hand: []) }
+
+    assert_not(game_with_not_empty_bag.finished?)
+    assert_not(game_with_not_empty_hands.finished?)
+    assert(finished_game.finished?)
+  end
 end

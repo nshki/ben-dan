@@ -26,7 +26,7 @@ class GamesController < ApplicationController
   # @route GET /games/:id/edit (edit_game)
   def edit
     @current_player = @game.player(current_user)
-    @move_active = @game.current_player == @current_player
+    @move_active = !@game.finished? && @game.current_player == @current_player
   end
 
   # @route PATCH /games/:id (game)

@@ -69,6 +69,15 @@ class Game < ApplicationRecord
     save if call_save
   end
 
+  # Determines whether the game is done.
+  #
+  # @return {Boolean} - True if finished, false otherwise
+  def finished?
+    hands = game_users.pluck(:hand)
+    an_empty_hand = hands.select(&:empty?)
+    tile_bag.empty? && an_empty_hand.present?
+  end
+
   private
 
   # Validates that the board is a two-dimensional array.
