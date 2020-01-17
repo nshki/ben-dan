@@ -7,8 +7,18 @@
   height: 100%;
   box-shadow: inset -3px -3px 3px rgba(#000, 0.1);
   border-radius: 0.5rem;
+  position: relative;
   text-transform: uppercase;
   font-weight: bold;
   font-size: 1.4rem;
   color: darken($yellow, 20%);
+
+  &:after {
+    position: absolute;
+    bottom: 0.3rem;
+    right: 0.3rem;
+    content: attr(data-points);
+    font-size: 0.7rem;
+    opacity: 0.5;
+  }
 }
