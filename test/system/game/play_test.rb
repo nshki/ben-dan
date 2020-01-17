@@ -5,6 +5,23 @@ require 'application_system_test_case'
 # rubocop:disable Style/ClassAndModuleChildren
 class Game::PlayTest < ApplicationSystemTestCase
   # rubocop:enable Style/ClassAndModuleChildren
+
+  test 'can undo tile placements' do
+    you = FactoryBot.create(:user, u: 'me', p: 'password')
+    opponent = FactoryBot.create(:user, u: 'rival')
+    game = GameCreator.call(users: [you, opponent])
+    game.update(current_turn_user: you)
+
+    login_with(username: 'me', password: 'password')
+    visit(edit_game_path(game))
+    first('.game-ui__hand .tile').click
+    first('.board__tile').click
+    click_on('Undo')
+
+    assert_selector('.game-ui__hand .tile', count: 8)
+    assert_selector('.board .tile', count: 0)
+  end
+
   test 'can make opening move' do
     you = FactoryBot.create(:user, u: 'me', p: 'password')
     opponent = FactoryBot.create(:user, u: 'rival')
