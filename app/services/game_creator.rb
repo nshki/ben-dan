@@ -2,6 +2,12 @@
 
 # Service that handles starting new games between players.
 class GameCreator
+  TILE_DISTRIBUTION =
+    {
+      a: 9, b: 2, c: 2, d: 5, e: 13, f: 2, g: 3, h: 5, i: 8, j: 1, k: 1, l: 5,
+      m: 2, n: 6, o: 8, p: 2, q: 1, r: 6, s: 5, t: 7, u: 4, v: 2, w: 2, x: 1,
+      y: 2, z: 1
+    }.freeze
   START_COORDS = [[7, 7]].freeze
   DL_COORDS =
     [
@@ -37,7 +43,7 @@ class GameCreator
         board: @board,
         users: users,
         current_turn_user: users.sample,
-        tile_bag: generate_tile_bag(tile_count: 100)
+        tile_bag: generate_tile_bag
       deal_hands(tile_count: 8)
 
       @game
@@ -62,13 +68,18 @@ class GameCreator
       fill.call(START_COORDS, :start)
     end
 
-    # Given a tile count, generates a randomized array of tiles.
+    # Adds standard tiles to bag.
     #
-    # @param {Integer} tile_count - Number of tiles to put in bag
-    # @return {Array<String>} - Randomized array of tiles
-    def generate_tile_bag(tile_count:)
+    # @return {Array<String>} - Array of tiles
+    def generate_tile_bag
       tile_bag = []
-      tile_count.times { tile_bag.push(Game::TILES.sample) }
+
+      TILE_DISTRIBUTION.each do |letter, count|
+        count.times do
+          tile_bag.push(letter.to_s)
+        end
+      end
+
       tile_bag
     end
 

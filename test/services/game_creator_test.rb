@@ -14,7 +14,7 @@ class GameCreatorTest < ActiveSupport::TestCase
     assert(game.users.include?(user1))
     assert(game.users.include?(user2))
     assert(game.current_turn_user.in?([user1, user2]))
-    assert_equal(84, game.tile_bag.count)
+    assert_equal(89, game.tile_bag.count)
     assert_equal(8, game.player(user1).hand.count)
     assert_equal(8, game.player(user2).hand.count)
   end
