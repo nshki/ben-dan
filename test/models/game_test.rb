@@ -82,6 +82,19 @@ class GameTest < ActiveSupport::TestCase
     assert_not(game.tile_bag.include?(tiles.first))
   end
 
+  test '#pass_turn properly passes turns' do
+    user1 = FactoryBot.create(:user, u: '1')
+    user2 = FactoryBot.create(:user, u: '2')
+    game =
+      FactoryBot.create(:game, users: [user1, user2], current_turn_user: user1)
+
+    assert_equal(user1, game.current_turn_user)
+    game.pass_turn(call_save: true)
+    assert_equal(user2, game.current_turn_user)
+    game.pass_turn(call_save: true)
+    assert_equal(user1, game.current_turn_user)
+  end
+
   test '#finished? determines when the game is finished' do
     user1 = FactoryBot.create(:user, u: '1')
     user2 = FactoryBot.create(:user, u: '2')

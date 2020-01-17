@@ -64,7 +64,7 @@ class Game < ApplicationRecord
   # @return {void}
   def pass_turn(call_save: false)
     next_user_index = users.index(current_turn_user) + 1
-    next_user_index = 0 if next_user_index > users.length
+    next_user_index = 0 if next_user_index >= users.length
     self.current_turn_user = users[next_user_index]
     save if call_save
   end
