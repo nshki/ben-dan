@@ -129,16 +129,12 @@ class ScoreCalculator
     #   [{ tile: String, rule: Symbol, row: Int, col: Int }]
     def horiz_tiles(placement)
       tiles = []
-      curr_col = placement[:col]
       curr_row = placement[:row]
-
-      # Shimmy down to the furthest non-blank, horizontal tile.
-      while curr_col.positive? && @board.dig(curr_col - 1, curr_row).present?
-        curr_col -= 1
-      end
+      curr_col = shimmy_col(col: placement[:col], row: curr_row)
 
       # Add tiles to the list.
-      while (curr_tile = @board.dig(curr_col, curr_row))
+      while (curr_tile = @board.dig(curr_col, curr_row)) &&
+            curr_tile.try(:[], 'tile').present?
         tiles.push(curr_tile.merge(col: curr_col, row: curr_row))
         curr_col += 1
       end
@@ -154,20 +150,45 @@ class ScoreCalculator
     def vert_tiles(placement)
       tiles = []
       curr_col = placement[:col]
-      curr_row = placement[:row]
-
-      # Shimmy down to the furthest non-blank, vertical tile.
-      while curr_row.positive? && @board.dig(curr_col, curr_row - 1).present?
-        curr_row -= 1
-      end
+      curr_row = shimmy_row(col: curr_col, row: placement[:row])
 
       # Add tiles to the list.
-      while (curr_tile = @board.dig(curr_col, curr_row))
+      while (curr_tile = @board.dig(curr_col, curr_row)) &&
+            curr_tile.try(:[], 'tile').present?
         tiles.push(curr_tile.merge(col: curr_col, row: curr_row))
         curr_row += 1
       end
 
       tiles.count > 1 ? tiles : nil
+    end
+
+    # Shimmy down to the furthest non-blank, horizontal tile.
+    #
+    # @param {Integer} col - Column index
+    # @param {Integer} row - Row index
+    # @return {Integer} - Column index
+    def shimmy_col(col:, row:)
+      while col.positive? &&
+            @board.dig(col - 1, row).present? &&
+            @board[col - 1][row]['tile'].present?
+        col -= 1
+      end
+
+      col
+    end
+
+    # Shimmy down to the furthest non-blank, vertical tile.
+    #
+    # @param {Integer} col - Column index
+    # @param {Integer} row - Row index
+    # @return {Integer} - Row index
+    def shimmy_row(col:, row:)
+      while row.positive? &&
+            @board.dig(col, row - 1).present? &&
+            @board[col][row - 1]['tile'].present?
+        row -= 1
+      end
+      row
     end
   end
 end
