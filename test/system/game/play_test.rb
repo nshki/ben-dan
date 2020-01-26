@@ -33,15 +33,15 @@ class Game::PlayTest < ApplicationSystemTestCase
     login_with(username: 'me', password: 'password')
     visit(edit_game_path(game))
     tile = '.game-ui__hand .tile'
-    first(tile, text: 'h').click
+    first(tile, text: 'H').click
     find('[data-col="7"][data-row="7"]').click
-    first(tile, text: 'e').click
+    first(tile, text: 'E').click
     find('[data-col="8"][data-row="7"]').click
-    first(tile, text: 'l').click
+    first(tile, text: 'L').click
     find('[data-col="9"][data-row="7"]').click
-    first(tile, text: 'l').click
+    first(tile, text: 'L').click
     find('[data-col="10"][data-row="7"]').click
-    first(tile, text: 'o').click
+    first(tile, text: 'O').click
     find('[data-col="11"][data-row="7"]').click
     click_on('Move!')
 
