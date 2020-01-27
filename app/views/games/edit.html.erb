@@ -38,7 +38,10 @@
             data-action="click->move#placeTile"
           >
             <% if presenter.content.present? %>
-              <div class="tile">
+              <div
+                class="tile"
+                data-points="<%= presenter.points %>"
+              >
                 <%= presenter.content %>
               </div><!-- .tile -->
             <% end %>

@@ -21,6 +21,15 @@ class TilePresenter
     @tile[:tile]
   end
 
+  # The point value of the tile, if any.
+  #
+  # @return {Integer} - Point value of tile
+  def points
+    return if content.blank?
+
+    ScoreCalculator::STANDARD_VALUES[content.to_sym]
+  end
+
   # The value to be plugged directly into a DOM element's `class` attribute.
   #
   # @return {String} - `class` attribute value
