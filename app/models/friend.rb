@@ -22,6 +22,9 @@
 class Friend < ApplicationRecord
   after_destroy :destroy_reciprocal_record
 
+  belongs_to :user
+  belongs_to :friend, class_name: 'User'
+
   validates :user_id, :friend_id, presence: true
 
   private

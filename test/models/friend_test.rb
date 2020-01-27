@@ -22,29 +22,35 @@ require 'test_helper'
 
 class FriendTest < ActiveSupport::TestCase
   test 'valid record' do
-    friend = FactoryBot.build(:friend, user_id: 1, friend_id: 2)
+    user1 = FactoryBot.create(:user, u: '1')
+    user2 = FactoryBot.create(:user, u: '2')
+    friend = FactoryBot.build(:friend, user_id: user1.id, friend_id: user2.id)
 
     assert(friend.valid?)
   end
 
   test 'invalid without `user_id`' do
-    friend = FactoryBot.build(:friend, user_id: nil, friend_id: 1)
+    user = FactoryBot.create(:user, u: '1')
+    friend = FactoryBot.build(:friend, user_id: nil, friend_id: user.id)
 
     assert_not(friend.valid?)
   end
 
   test 'invalid without `friend_id`' do
-    friend = FactoryBot.build(:friend, user_id: 1, friend_id: nil)
+    user = FactoryBot.create(:user, u: '1')
+    friend = FactoryBot.build(:friend, user_id: user.id, friend_id: nil)
 
     assert_not(friend.valid?)
   end
 
   test 'destroys reciprocal record when destroyed' do
-    friend = FactoryBot.create(:friend, user_id: 1, friend_id: 2)
-    reciprocal = FactoryBot.create(:friend, user_id: 2, friend_id: 1)
+    user1 = FactoryBot.create(:user, u: '1')
+    user2 = FactoryBot.create(:user, u: '2')
+    friend = FactoryBot.create(:friend, user_id: user1.id, friend_id: user2.id)
+    mirror = FactoryBot.create(:friend, user_id: user2.id, friend_id: user1.id)
 
     friend.destroy
 
-    assert_nil(Friend.find_by(id: reciprocal.id))
+    assert_nil(Friend.find_by(id: mirror.id))
   end
 end
