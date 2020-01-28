@@ -20,7 +20,11 @@
 
 # Represents a relationship between two `User` records.
 class Friend < ApplicationRecord
-  after_destroy :destroy_reciprocal_record
+  after_commit \
+    :create_reciprocal_record,
+    on: %i[create update],
+    if: proc { saved_change_to_attribute?(:confirmed, to: true) }
+  after_destroy_commit :destroy_reciprocal_record
 
   belongs_to :user
   belongs_to :friend, class_name: 'User'
@@ -28,6 +32,13 @@ class Friend < ApplicationRecord
   validates :user_id, :friend_id, presence: true
 
   private
+
+  # Creates a reciprocal record (becomes a friend).
+  #
+  # @return {void}
+  def create_reciprocal_record
+    Friend.find_or_create_by(user_id: friend_id, friend_id: user_id)
+  end
 
   # Destroys the reciprocal record, if any.
   #

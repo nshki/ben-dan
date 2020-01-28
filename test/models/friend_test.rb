@@ -43,14 +43,21 @@ class FriendTest < ActiveSupport::TestCase
     assert_not(friend.valid?)
   end
 
+  test 'creates reciprocal record when `confirmed` is true' do
+    user1 = FactoryBot.create(:user, u: '1')
+    user2 = FactoryBot.create(:user, u: '2')
+    FactoryBot.create(:friend, user: user1, friend: user2)
+
+    assert(Friend.find_by(user: user2, friend: user1))
+  end
+
   test 'destroys reciprocal record when destroyed' do
     user1 = FactoryBot.create(:user, u: '1')
     user2 = FactoryBot.create(:user, u: '2')
-    friend = FactoryBot.create(:friend, user_id: user1.id, friend_id: user2.id)
-    mirror = FactoryBot.create(:friend, user_id: user2.id, friend_id: user1.id)
+    friend = FactoryBot.create(:friend, user: user1, friend: user2)
 
     friend.destroy
 
-    assert_nil(Friend.find_by(id: mirror.id))
+    assert_nil(Friend.find_by(user: user2, friend: user1))
   end
 end
