@@ -2,9 +2,7 @@
 
 require 'application_system_test_case'
 
-# rubocop:disable Style/ClassAndModuleChildren
-class Game::CreationTest < ApplicationSystemTestCase
-  # rubocop:enable Style/ClassAndModuleChildren
+class GameCreationTest < ApplicationSystemTestCase
   test 'can start new game' do
     FactoryBot.create(:user, u: 'me', p: 'password')
     FactoryBot.create(:user, u: 'rival')

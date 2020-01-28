@@ -2,10 +2,7 @@
 
 require 'application_system_test_case'
 
-# rubocop:disable Style/ClassAndModuleChildren
-class Game::PlayTest < ApplicationSystemTestCase
-  # rubocop:enable Style/ClassAndModuleChildren
-
+class GamePlayTest < ApplicationSystemTestCase
   test 'can undo tile placements' do
     you = FactoryBot.create(:user, u: 'me', p: 'password')
     opponent = FactoryBot.create(:user, u: 'rival')
