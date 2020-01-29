@@ -16,12 +16,15 @@ class FriendRequestsController < ApplicationController
     if user.present?
       friend_request = Friend.create(user: current_user, friend: user)
 
+      # Handle the mutual request case.
       if friend_request.reciprocal.present?
         friend_request.update(confirmed: true)
         success = I18n.t('friend_request.accepted', from: username)
       end
     end
 
+    # We're always showing a success message here to obfuscate what users exist
+    # in the system.
     redirect_to(friends_path, flash: { success: success })
   end
 
