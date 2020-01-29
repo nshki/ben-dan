@@ -9,12 +9,20 @@ class FriendRequestsController < ApplicationController
 
   # @route POST /friend_requests (friend_requests)
   def create
-    user = User.find_by(username: params[:username])
-    Friend.create(user: current_user, friend: user) if user.present?
+    username = params[:username]
+    user = User.find_by(username: username)
+    success = I18n.t('friend_request.sent', to: username)
 
-    redirect_to \
-      friends_path,
-      flash: { success: I18n.t('friend_request.sent', to: user.username) }
+    if user.present?
+      friend_request = Friend.create(user: current_user, friend: user)
+
+      if friend_request.reciprocal.present?
+        friend_request.update(confirmed: true)
+        success = I18n.t('friend_request.accepted', from: username)
+      end
+    end
+
+    redirect_to(friends_path, flash: { success: success })
   end
 
   # @route DELETE /friend_requests/:id (friend_request)
