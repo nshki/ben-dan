@@ -60,4 +60,16 @@ class FriendTest < ActiveSupport::TestCase
 
     assert_nil(Friend.find_by(user: user2, friend: user1))
   end
+
+  test '#reciprocal returns expected results' do
+    user1 = FactoryBot.create(:user, u: '1')
+    user2 = FactoryBot.create(:user, u: '2')
+    user3 = FactoryBot.create(:user, u: '3')
+    friend = FactoryBot.create(:friend, user: user1, friend: user2)
+    request = FactoryBot.create(:friend_request, user: user1, friend: user3)
+
+    assert(friend.reciprocal.present?)
+    assert_equal(Friend.find_by(user: user2, friend: user1), friend.reciprocal)
+    assert_nil(request.reciprocal)
+  end
 end

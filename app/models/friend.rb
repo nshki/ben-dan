@@ -31,6 +31,13 @@ class Friend < ApplicationRecord
 
   validates :user_id, :friend_id, presence: true
 
+  # Gets the reciprocal record, if it exists.
+  #
+  # @return {Friend} - Reciprocal record
+  def reciprocal
+    Friend.find_by(user_id: friend_id, friend_id: user_id)
+  end
+
   private
 
   # Creates a reciprocal record (becomes a friend).
