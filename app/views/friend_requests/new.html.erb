@@ -1,0 +1,6 @@
+<%= form_with(url: friend_requests_path) do |f| %>
+  <%= f.label(:username) %>
+  <%= f.text_field(:username) %>
+
+  <%= f.submit('Add Friend') %>
+<% end %>

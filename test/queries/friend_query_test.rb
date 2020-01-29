@@ -8,7 +8,7 @@ class FriendQueryTest < ActiveSupport::TestCase
     friend = FactoryBot.create(:user, username: 'fren')
     rando = FactoryBot.create(:user, username: 'rando')
     user_request = FactoryBot.create(:friend, user: user, friend: friend)
-    friend_request = FactoryBot.create(:friend, user: friend, friend: user)
+    friend_request = Friend.find_by(user: friend, friend: user)
     rando_request =
       FactoryBot.create(:friend_request, user: rando, friend: user)
 
@@ -24,7 +24,7 @@ class FriendQueryTest < ActiveSupport::TestCase
     friend = FactoryBot.create(:user, username: 'fren')
     rando = FactoryBot.create(:user, username: 'rando')
     user_request = FactoryBot.create(:friend, user: user, friend: friend)
-    friend_request = FactoryBot.create(:friend, user: friend, friend: user)
+    friend_request = Friend.find_by(user: friend, friend: user)
     rando_request =
       FactoryBot.create(:friend_request, user: rando, friend: user)
 

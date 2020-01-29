@@ -23,7 +23,7 @@ class Friend < ApplicationRecord
   after_commit \
     :create_reciprocal_record,
     on: %i[create update],
-    if: proc { saved_change_to_attribute?(:confirmed, to: true) }
+    if: proc { saved_change_to_attribute?(:confirmed, from: false, to: true) }
   after_destroy_commit :destroy_reciprocal_record
 
   belongs_to :user
@@ -37,7 +37,11 @@ class Friend < ApplicationRecord
   #
   # @return {void}
   def create_reciprocal_record
-    Friend.find_or_create_by(user_id: friend_id, friend_id: user_id)
+    if (friend = Friend.find_by(user_id: friend_id, friend_id: user_id))
+      friend.update(confirmed: true)
+    else
+      Friend.create(user_id: friend_id, friend_id: user_id, confirmed: true)
+    end
   end
 
   # Destroys the reciprocal record, if any.
