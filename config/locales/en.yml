@@ -1,8 +1,9 @@
 en:
   friend_request:
     sent: 'Friend request sent to %{to}!'
-    accepted: "You're now friends with ${from}!"
+    accepted: "You're now friends with %{from}!"
     declined: 'Declined friend request from %{from}.'
     not_found: "The friend request wasn't found."
+    self: "You're always your own friend. :)"
   friend:
-    removed: "You're no longer friends with ${username}"
+    removed: "You're no longer friends with %{username}"

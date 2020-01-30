@@ -18,7 +18,7 @@ class FriendsController < ApplicationController
     end
 
     friend = friend_request.user
-    add_friend(friend)
+    Friend.create(user: current_user, friend: friend, confirmed: true)
     redirect_to \
       friends_path,
       notice: I18n.t('friend_request.accepted', from: friend.username)
@@ -34,19 +34,5 @@ class FriendsController < ApplicationController
     redirect_to \
       friends_path,
       notice: I18n.t('friend.removed', username: username)
-  end
-
-  private
-
-  # Accepts a friend request and creates a "friend"--AKA the presence of two
-  # reciprocal Friend records.
-  #
-  # @param {User} friend - User record
-  # @return {void}
-  def add_friend(friend)
-    Friend.transaction do
-      Friend.create(user: current_user, friend: friend, confirmed: true)
-      Friend.find_by(user: friend, friend: current_user).update(confirmed: true)
-    end
   end
 end

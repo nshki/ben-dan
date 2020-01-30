@@ -21,7 +21,7 @@
 # Represents a relationship between two `User` records.
 class Friend < ApplicationRecord
   after_commit \
-    :create_reciprocal_record,
+    :ensure_reciprocal_record,
     on: %i[create update],
     if: proc { saved_change_to_attribute?(:confirmed, from: false, to: true) }
   after_destroy_commit :destroy_reciprocal_record
@@ -43,7 +43,7 @@ class Friend < ApplicationRecord
   # Creates a reciprocal record (becomes a friend).
   #
   # @return {void}
-  def create_reciprocal_record
+  def ensure_reciprocal_record
     if (friend = Friend.find_by(user_id: friend_id, friend_id: user_id))
       friend.update(confirmed: true)
     else

@@ -34,6 +34,18 @@ class FriendManagementTest < ApplicationSystemTestCase
     assert(fren.friends.first.confirmed?)
   end
 
+  test "can't friend yourself" do
+    FactoryBot.create(:user, u: 'me', p: 'password')
+
+    login_with(username: 'me', password: 'password')
+    visit(new_friend_request_path)
+    fill_in('Username', with: 'me')
+    click_on('Add Friend')
+
+    assert_text(I18n.t('friend_request.self'))
+    assert_equal(0, Friend.count)
+  end
+
   test 'can accept friend request' do
     me = FactoryBot.create(:user, u: 'me', p: 'password')
     fren = FactoryBot.create(:user, u: 'fren', p: 'password')
@@ -43,7 +55,7 @@ class FriendManagementTest < ApplicationSystemTestCase
     visit(friends_path)
     click_on('Accept')
 
-    assert_text(I18n.t('friend_request.accepted', friend: fren.username))
+    assert_text(I18n.t('friend_request.accepted', from: fren.username))
     assert_equal(1, me.friends.count)
     assert_equal(1, fren.friends.count)
   end

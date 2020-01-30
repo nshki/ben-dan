@@ -1,3 +1,5 @@
+<%= link_to('Add Friend', new_friend_request_path) %>
+
 <% if @friend_requests.present? %>
   <h2>Friend Requests</h2>
 
@@ -25,9 +27,9 @@
   </ul>
 <% end %>
 
-<% if @friends.present? %>
-  <h2>Friends</h2>
+<h2>Friends</h2>
 
+<% if @friends.present? %>
   <ul>
     <% @friends.each do |friend| %>
       <% presenter = FriendPresenter.new(friend) %>
