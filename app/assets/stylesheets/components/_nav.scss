@@ -5,17 +5,14 @@
   justify-content: space-between;
   width: 100%;
   margin: 0;
-  padding: 1rem;
+  padding: 0;
   color: #fff;
-}
-
-.nav__logo {
-  margin: 0;
-  font-weight: bold;
-  font-size: 1rem;
 
   a {
+    display: block;
+    padding: 1rem;
     text-decoration: none;
+    font-weight: bold;
     color: inherit;
     transition: color 0.25s ease-in-out;
 
@@ -23,6 +20,12 @@
       color: #f2cc0c;
     }
   }
+}
+
+.nav__logo {
+  margin: 0;
+  font-weight: bold;
+  font-size: 1rem;
 }
 
 .nav__items {
@@ -36,16 +39,4 @@
 .nav__item {
   margin: 0;
   padding: 0;
-
-  a {
-    display: block;
-    text-decoration: none;
-    font-weight: bold;
-    color: inherit;
-    transition: color 0.25s ease-in-out;
-
-    &:hover {
-      color: #f2cc0c;
-    }
-  }
 }

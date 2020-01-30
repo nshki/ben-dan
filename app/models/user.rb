@@ -15,6 +15,7 @@
 class User < ApplicationRecord
   has_secure_password
 
+  has_many :friends, dependent: :destroy
   has_many :game_users, dependent: :destroy
   has_many :games, through: :game_users
 

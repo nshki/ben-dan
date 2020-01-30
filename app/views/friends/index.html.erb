@@ -1,0 +1,52 @@
+<%= link_to('Add Friend', new_friend_request_path) %>
+
+<% if @friend_requests.present? %>
+  <h2>Friend Requests</h2>
+
+  <ul>
+    <% @friend_requests.each do |friend_request| %>
+      <% presenter = FriendRequestPresenter.new(friend_request) %>
+      <li>
+        <%= presenter.name %>
+
+        <%= form_with(url: friends_path) do |f| %>
+          <%= f.hidden_field(:id, value: presenter.id) %>
+          <%= f.submit('Accept') %>
+        <% end %>
+
+        <%=
+          form_with(
+            url: friend_request_path(friend_request),
+            method: :delete
+          ) do |f|
+        %>
+          <%= f.submit('Decline') %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<h2>Friends</h2>
+
+<% if @friends.present? %>
+  <ul>
+    <% @friends.each do |friend| %>
+      <% presenter = FriendPresenter.new(friend) %>
+      <li>
+        <%= presenter.name %>
+
+        <%= form_with(url: games_path) do |f| %>
+          <%= f.hidden_field(:opponent_id, value: presenter.id) %>
+          <%= f.submit('Play') %>
+        <% end %>
+
+        <%= form_with(model: friend, method: :delete) do |f| %>
+          <%= f.submit('Remove') %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>It's lonely in here... Why not add some friends?</p>
+<% end %>

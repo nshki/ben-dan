@@ -49,16 +49,25 @@ class Game < ApplicationRecord
     game_users.find_by(user: current_turn_user)
   end
 
-  # Given a User, returns the corresponding GameUser.
+  # Given a user, returns the corresponding GameUser.
   #
-  # @param {User} - User record
+  # @param {User} user - User record
   # @return {GameUser} - Player for the User
   def player(user)
     game_users.find_by(user: user)
   end
 
+  # Given a user, returns the username of their opponent.
+  #
+  # @param {User} user - User record
+  # @return {String} - Name of opponent
+  def opponent_of(user)
+    users.where.not(id: user.id).first.username
+  end
+
   # Passes the turn to the next player.
   #
+  # @param {Boolean} call_save - Commit to database or not
   # @return {void}
   def pass_turn(call_save: false)
     next_user_index = users.index(current_turn_user) + 1
@@ -97,6 +106,7 @@ class Game < ApplicationRecord
 
   # Validates that the given object is a formatted `Hash` or nil.
   #
+  # @param {Object} piece - Some object
   # @return {void}
   def validate_board_piece(piece)
     valid_hash =

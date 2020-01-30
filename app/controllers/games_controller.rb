@@ -11,11 +11,6 @@ class GamesController < ApplicationController
     @games = current_user.games
   end
 
-  # @route GET /games/new (new_game)
-  def new
-    @players = User.where.not(id: current_user.id)
-  end
-
   # @route POST /games (games)
   def create
     opponent = User.find_by(id: params[:opponent_id])

@@ -1,4 +1,4 @@
-<%= link_to('New Game', new_game_path) %>
+<%= link_to('Start a new game with a friend', friends_path) %>
 
 <% if @games.any? %>
   <ul>
@@ -6,7 +6,7 @@
       <li>
         <%=
           link_to \
-            "Game with #{game.users.where.not(id: current_user.id).first.username}",
+            "Game with #{game.opponent_of(current_user)}",
             edit_game_path(game)
         %>
       </li>
