@@ -36,6 +36,11 @@
       <li>
         <%= presenter.name %>
 
+        <%= form_with(url: games_path) do |f| %>
+          <%= f.hidden_field(:opponent_id, value: presenter.id) %>
+          <%= f.submit('Play') %>
+        <% end %>
+
         <%= form_with(model: friend, method: :delete) do |f| %>
           <%= f.submit('Remove') %>
         <% end %>

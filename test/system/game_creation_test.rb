@@ -4,13 +4,13 @@ require 'application_system_test_case'
 
 class GameCreationTest < ApplicationSystemTestCase
   test 'can start new game' do
-    FactoryBot.create(:user, u: 'me', p: 'password')
-    FactoryBot.create(:user, u: 'rival')
+    me = FactoryBot.create(:user, u: 'me', p: 'password')
+    opponent = FactoryBot.create(:user, u: 'rival')
+    FactoryBot.create(:friend, user: me, friend: opponent)
 
     login_with(username: 'me', password: 'password')
-    visit(new_game_path)
-    select('rival', from: 'Opponent')
-    click_on('Start Game')
+    visit(friends_path)
+    click_on('Play')
 
     assert_css('.board')
   end

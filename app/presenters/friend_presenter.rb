@@ -11,10 +11,17 @@ class FriendPresenter
   end
 
   # Returns the name of the friend. Fetches the User record identified by the
-  # `friend_id` foreign key, since `user_id` should be the "befriended."
+  # `friend_id` foreign key, since `user_id` should be the "you."
   #
   # @return {String} - Name of friend
   def name
     @friend.friend.username
+  end
+
+  # Returns the ID of the friend.
+  #
+  # @return {Integer} - ID of friend
+  def id
+    @friend.friend.id
   end
 end
