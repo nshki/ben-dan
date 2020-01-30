@@ -6,7 +6,7 @@
       <li>
         <%=
           link_to \
-            "Game with #{game.users.where.not(id: current_user.id).first.username}",
+            "Game with #{game.opponent_of(current_user)}",
             edit_game_path(game)
         %>
       </li>

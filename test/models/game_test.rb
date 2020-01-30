@@ -70,7 +70,7 @@ class GameTest < ActiveSupport::TestCase
     assert(valid_char.valid?)
   end
 
-  test 'can pull random tiles from tile bag' do
+  test '#pull_random_tiles fetches random tiles from tile bag' do
     game = FactoryBot.create(:game, tile_bag: %w[a b c])
 
     tiles = game.pull_random_tiles(count: 1)
