@@ -7,6 +7,7 @@ class SessionManagementTest < ApplicationSystemTestCase
     FactoryBot.create(:user, u: 'username', p: 'password')
 
     login_with(username: 'username', password: 'password')
+    click_on('username')
     click_on('Logout')
 
     assert_field('Username')
