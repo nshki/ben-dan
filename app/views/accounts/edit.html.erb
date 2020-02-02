@@ -1,0 +1,11 @@
+<h2>Edit Account</h2>
+
+<%= form_with(model: @account, url: account_path) do |f| %>
+  <%= f.label(:password) %>
+  <%= f.password_field(:password) %>
+
+  <%= f.label(:password_confirmation, 'Password Confirmation') %>
+  <%= f.password_field(:password_confirmation) %>
+
+  <%= f.submit('Save') %>
+<% end %>

@@ -1,4 +1,6 @@
 en:
+  accounts:
+    updated: 'Successfully updated your account!'
   friend_request:
     sent: 'Friend request sent to %{to}!'
     accepted: "You're now friends with %{from}!"
