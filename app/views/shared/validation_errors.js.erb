@@ -1,0 +1,8 @@
+(function() {
+  const container = document.querySelector('.validation-errors');
+
+  if (container) {
+    container.innerHTML =
+      '<%=j render("shared/validation_errors", resource: resource) %>';
+  }
+})();
