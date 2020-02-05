@@ -1,5 +1,5 @@
 en:
-  accounts:
+  account:
     updated: 'Successfully updated your account!'
   friend_request:
     sent: 'Friend request sent to %{to}!'
@@ -8,4 +8,4 @@ en:
     not_found: "The friend request wasn't found."
     self: "You're always your own friend. :)"
   friend:
-    removed: "You're no longer friends with %{username}"
+    removed: "You're no longer friends with %{username}."
