@@ -1,6 +1,8 @@
 <h2>Edit Account</h2>
 
 <%= form_with(model: @account, url: account_path) do |f| %>
+  <div class="validation-errors"></div>
+
   <%= f.label(:password) %>
   <%= f.password_field(:password) %>
 

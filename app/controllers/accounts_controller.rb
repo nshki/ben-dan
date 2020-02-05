@@ -14,7 +14,7 @@ class AccountsController < ApplicationController
     if @account.update(account_params)
       redirect_to(edit_account_path, notice: I18n.t('account.updated'))
     else
-      render(:edit)
+      render('shared/validation_errors', locals: { resource: @account })
     end
   end
 
