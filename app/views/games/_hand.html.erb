@@ -14,11 +14,11 @@
   </div><!-- .game-ui__hand__tiles -->
 
   <% if move_active %>
-    <%= form_with(model: game, class: 'game-ui__form') do |f| %>
-      <div class="game-ui__form__data" data-target="move.form">
-      </div><!-- .game-ui__form__data -->
+    <div class="game-ui__controls">
+      <%= form_with(model: game, class: 'game-ui__form') do |f| %>
+        <div class="game-ui__form__data" data-target="move.form">
+        </div><!-- .game-ui__form__data -->
 
-      <div class="game-ui__form__controls">
         <button
           class="button button--alt"
           data-action="click->move#shuffle"
@@ -30,8 +30,6 @@
         <button
           class="button button--alt"
           data-action="click->move#undo"
-          data-target="move.control"
-          disabled="disabled"
           type="button"
         >
           Undo
@@ -39,12 +37,11 @@
 
         <%=
           f.submit \
-            'Move!',
-            disabled: true,
+            'Pass',
             class: 'button',
-            data: { target: 'move.control' }
+            data: { target: 'move.submit' }
         %>
-      </div><!-- .game-ui__form__controls -->
-    <% end %>
+      <% end %>
+    </div><!-- .game-ui__controls -->
   <% end %>
 </menu><!-- .game-ui__hand -->

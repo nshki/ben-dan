@@ -19,6 +19,19 @@ class GamePlayTest < ApplicationSystemTestCase
     assert_selector('.board .tile', count: 0)
   end
 
+  test 'can pass turn' do
+    you = FactoryBot.create(:user, u: 'me', p: 'password')
+    opponent = FactoryBot.create(:user, u: 'rival')
+    game = GameCreator.call(users: [you, opponent])
+    game.update(current_turn_user: you)
+
+    login_with(username: 'me', password: 'password')
+    visit(edit_game_path(game))
+    click_on('Pass')
+
+    assert_selector('.game-ui__score--active', text: 'rival')
+  end
+
   test 'can make opening move' do
     you = FactoryBot.create(:user, u: 'me', p: 'password')
     opponent = FactoryBot.create(:user, u: 'rival')
@@ -40,7 +53,7 @@ class GamePlayTest < ApplicationSystemTestCase
     find('[data-col="10"][data-row="7"]').click
     first(tile, text: 'O').click
     find('[data-col="11"][data-row="7"]').click
-    click_on('Move!')
+    click_on('Submit')
 
     assert_text("me\n16")
   end

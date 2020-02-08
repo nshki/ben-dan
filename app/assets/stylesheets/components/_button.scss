@@ -11,10 +11,6 @@
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 
-  & + & {
-    margin-left: 0.5rem;
-  }
-
   &:hover {
     background-color: lighten($green, 2%);
   }
