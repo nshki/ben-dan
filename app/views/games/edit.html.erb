@@ -73,7 +73,7 @@
 
         <div class="game-ui__form__controls">
           <button
-            class="game-ui__form__button game-ui__form__button--alt"
+            class="button button--alt"
             data-action="click->move#shuffle"
             type="button"
           >
@@ -81,7 +81,7 @@
           </button>
 
           <button
-            class="game-ui__form__button game-ui__form__button--alt"
+            class="button button--alt"
             data-action="click->move#undo"
             data-target="move.control"
             disabled="disabled"
@@ -94,7 +94,7 @@
             f.submit \
               'Move!',
               disabled: true,
-              class: 'game-ui__form__button',
+              class: 'button',
               data: { target: 'move.control' }
           %>
         </div><!-- .game-ui__form__controls -->
