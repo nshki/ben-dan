@@ -56,6 +56,6 @@ class GamesController < ApplicationController
   #
   # @return {void}
   def set_game
-    @game = Game.find_by(id: params[:id])
+    @game = Game.includes(:game_users).find_by(id: params[:id])
   end
 end
