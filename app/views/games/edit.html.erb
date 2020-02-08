@@ -74,9 +74,18 @@
         <div class="game-ui__form__controls">
           <button
             class="game-ui__form__button game-ui__form__button--alt"
+            data-action="click->move#shuffle"
+            type="button"
+          >
+            Shuffle
+          </button>
+
+          <button
+            class="game-ui__form__button game-ui__form__button--alt"
             data-action="click->move#undo"
             data-target="move.control"
             disabled="disabled"
+            type="button"
           >
             Undo
           </button>

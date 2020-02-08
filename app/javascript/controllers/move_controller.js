@@ -35,6 +35,20 @@ export default class extends Controller {
   }
 
   /**
+   * Shuffles tiles in hand. Uses technique based on the Fisher-Yates shuffle.
+   * Ref: https://stackoverflow.com/a/11972692
+   *
+   * @return {void}
+   */
+  shuffle() {
+    const tiles = this.handTarget.children;
+
+    for (let i = tiles.length; i >= 0; i--) {
+      this.handTarget.appendChild(tiles[Math.random() * i | 0])
+    }
+  }
+
+  /**
    * Bring all tiles back to the hand.
    *
    * @return {void}
