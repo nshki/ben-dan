@@ -1,0 +1,26 @@
+<div class="board" data-target="move.board">
+  <% game.board.each_with_index do |col, x| %>
+    <div class="board__col">
+      <% col.each_with_index do |tile, y| %>
+        <%
+          presenter = TilePresenter.new(tile: tile, bem_base: 'board__tile')
+        %>
+        <div
+          class="<%= presenter.css_classes %>"
+          data-col="<%= x %>"
+          data-row="<%= y %>"
+          data-action="click->move#placeTile"
+        >
+          <% if presenter.content.present? %>
+            <div
+              class="tile"
+              data-points="<%= presenter.points %>"
+            >
+              <%= presenter.content %>
+            </div><!-- .tile -->
+          <% end %>
+        </div>
+      <% end %>
+    </div><!-- .board__col -->
+  <% end %>
+</div><!-- .board -->
