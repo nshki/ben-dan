@@ -7,29 +7,25 @@ class SessionsController < ApplicationController
 
   # @route POST /sessions (sessions)
   def create
-    username = params[:username]
-    password = params[:password]
-    user = User.find_by(username: username)
-    login_failed && return if user.blank? || !user.authenticate(password)
+    user = User.find_by(username: params[:username])
+    login_failed && return unless user&.authenticate(params[:password])
 
-    session[:user_id] = user.id
+    cookies.encrypted.permanent[:user_id] = user.id
     redirect_to(games_path)
   end
 
   # @route DELETE /sessions/:id (session)
   def destroy
-    session[:user_id] = nil
-    flash[:success] = 'You have logged out.'
-    redirect_to(new_session_path)
+    cookies.delete(:user_id)
+    redirect_to(new_session_path, notice: I18n.t('session.logged_out'))
   end
 
   private
 
-  # Sets failure state and re-renders the login form.
+  # Invalid credentials
   #
   # @return {void}
   def login_failed
-    flash[:error] = 'Username or password invalid'
-    render(:new)
+    redirect_to(new_session_path, alert: I18n.t('session.invalid_credentials'))
   end
 end

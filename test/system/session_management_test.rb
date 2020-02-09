@@ -10,7 +10,12 @@ class SessionManagementTest < ApplicationSystemTestCase
     click_on('username')
     click_on('Logout')
 
-    assert_field('Username')
-    assert_field('Password')
+    assert_text(I18n.t('session.logged_out'))
+  end
+
+  test 'invalid credentials results in error' do
+    login_with(username: 'ghost', password: 'password')
+
+    assert_text(I18n.t('session.invalid_credentials'))
   end
 end
