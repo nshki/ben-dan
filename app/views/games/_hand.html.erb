@@ -1,0 +1,47 @@
+<menu class="game-ui__hand">
+  <div class="game-ui__hand__tiles" data-target="move.hand">
+    <% current_player.hand.each_with_index do |tile, index| %>
+      <div
+        class="tile"
+        data-action="click->move#selectTile"
+        data-target="move.tile"
+        data-index="<%= index %>"
+        data-points="<%= ScoreCalculator::STANDARD_VALUES[tile.to_sym] %>"
+      >
+        <%= tile %>
+      </div><!-- .tile -->
+    <% end %>
+  </div><!-- .game-ui__hand__tiles -->
+
+  <% if move_active %>
+    <div class="game-ui__controls">
+      <%= form_with(model: game, class: 'game-ui__form') do |f| %>
+        <div class="game-ui__form__data" data-target="move.form">
+        </div><!-- .game-ui__form__data -->
+
+        <button
+          class="button button--alt"
+          data-action="click->move#shuffle"
+          type="button"
+        >
+          Shuffle
+        </button>
+
+        <button
+          class="button button--alt"
+          data-action="click->move#undo"
+          type="button"
+        >
+          Undo
+        </button>
+
+        <%=
+          f.submit \
+            'Pass',
+            class: 'button',
+            data: { target: 'move.submit' }
+        %>
+      <% end %>
+    </div><!-- .game-ui__controls -->
+  <% end %>
+</menu><!-- .game-ui__hand -->

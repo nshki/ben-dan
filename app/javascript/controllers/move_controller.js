@@ -1,7 +1,7 @@
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
-  static targets = ['board', 'tile', 'hand', 'control', 'form'];
+  static targets = ['board', 'tile', 'hand', 'form', 'submit'];
 
   /**
    * Selects a tile from the player's hand.
@@ -30,8 +30,22 @@ export default class extends Controller {
     tile.classList.remove('selected');
     e.target.appendChild(tile);
     this.boardTarget.classList.remove('placeable');
-    this.controlTargets.map((control) => control.disabled = false);
+    this.submitTarget.value = 'Submit';
     this.addToForm({ tile, boardTile: e.target });
+  }
+
+  /**
+   * Shuffles tiles in hand. Uses technique based on the Fisher-Yates shuffle.
+   * Ref: https://stackoverflow.com/a/11972692
+   *
+   * @return {void}
+   */
+  shuffle() {
+    const tiles = this.handTarget.children;
+
+    for (let i = tiles.length; i >= 0; i--) {
+      this.handTarget.appendChild(tiles[Math.random() * i | 0])
+    }
   }
 
   /**
@@ -42,7 +56,7 @@ export default class extends Controller {
   undo() {
     this.boardTarget.classList.remove('placeable');
     this.tileTargets.map((tile) => this.handTarget.appendChild(tile));
-    this.controlTargets.map((control) => control.disabled = true);
+    this.submitTarget.value = 'Pass';
     this.formTarget.innerHTML = '';
   }
 

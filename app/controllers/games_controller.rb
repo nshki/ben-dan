@@ -27,21 +27,36 @@ class GamesController < ApplicationController
   # @route PATCH /games/:id (game)
   # @route PUT /games/:id (game)
   def update
-    placements =
-      params[:placements].map do |placement|
-        tokens = placement.split(':').map(&:to_i)
-        { col: tokens.first, row: tokens.second, tile: tokens.third }
-      end
-    MoveMaker.call(game: @game, placements: placements)
+    placements = parse_placements
+
+    if placements.any?
+      MoveMaker.call(game: @game, placements: placements)
+    else
+      @game.pass_turn(call_save: true)
+    end
+
+    ActionCable.server.broadcast("game_#{@game.id}", {})
     redirect_to(edit_game_path(@game))
   end
 
   private
 
+  # Parses the placements parameter.
+  #
+  # @return {Array<Hash>} - [{ col: Integer, row: Integer, tile: Integer }, ..]
+  def parse_placements
+    return [] if params[:placements].blank?
+
+    params[:placements].map do |placement|
+      tokens = placement.split(':').map(&:to_i)
+      { col: tokens.first, row: tokens.second, tile: tokens.third }
+    end
+  end
+
   # Stores the current game as an instance variable.
   #
   # @return {void}
   def set_game
-    @game = Game.find_by(id: params[:id])
+    @game = Game.includes(:game_users).find_by(id: params[:id])
   end
 end

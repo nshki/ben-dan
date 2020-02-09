@@ -1,0 +1,19 @@
+<div class="game-ui__scores">
+  <% game.game_users.each do |player| %>
+    <%
+      presenter = ScorePresenter.new \
+        player: player,
+        game: game,
+        bem_base: 'game-ui__score'
+    %>
+    <div class="<%= presenter.parent_css_classes %>">
+      <h1 class="<%= presenter.name_css_classes %>">
+        <%= presenter.name %>
+      </h1>
+
+      <h2 class="<%= presenter.score_css_classes %>">
+        <%= presenter.score %>
+      </h2>
+    </div>
+  <% end %>
+</div><!-- .game-ui__scores -->

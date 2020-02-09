@@ -1,95 +1,17 @@
 <div
   class="game-ui"
-  data-controller="move"
+  data-controller="move live-reload"
+  data-live-reload-game-id="<%= @game.id %>"
   data-finished="<%= @game.finished?.to_s %>"
   data-move-active="<%= @move_active.to_s %>"
 >
-  <div class="game-ui__scores">
-    <% @game.game_users.each do |player| %>
-      <%
-        presenter = ScorePresenter.new \
-          player: player,
-          game: @game,
-          bem_base: 'game-ui__score'
-      %>
-      <div class="<%= presenter.parent_css_classes %>">
-        <h1 class="<%= presenter.name_css_classes %>">
-          <%= presenter.name %>
-        </h1>
-
-        <h2 class="<%= presenter.score_css_classes %>">
-          <%= presenter.score %>
-        </h2>
-      </div>
-    <% end %>
-  </div><!-- .game-ui__scores -->
-
-  <div class="board" data-target="move.board">
-    <% @game.board.each_with_index do |col, x| %>
-      <div class="board__col">
-        <% col.each_with_index do |tile, y| %>
-          <%
-            presenter = TilePresenter.new(tile: tile, bem_base: 'board__tile')
-          %>
-          <div
-            class="<%= presenter.css_classes %>"
-            data-col="<%= x %>"
-            data-row="<%= y %>"
-            data-action="click->move#placeTile"
-          >
-            <% if presenter.content.present? %>
-              <div
-                class="tile"
-                data-points="<%= presenter.points %>"
-              >
-                <%= presenter.content %>
-              </div><!-- .tile -->
-            <% end %>
-          </div>
-        <% end %>
-      </div><!-- .board__col -->
-    <% end %>
-  </div><!-- .board -->
-
-  <menu class="game-ui__hand">
-    <div class="game-ui__hand__tiles" data-target="move.hand">
-      <% @current_player.hand.each_with_index do |tile, index| %>
-        <div
-          class="tile"
-          data-action="click->move#selectTile"
-          data-target="move.tile"
-          data-index="<%= index %>"
-          data-points="<%= ScoreCalculator::STANDARD_VALUES[tile.to_sym] %>"
-        >
-          <%= tile %>
-        </div><!-- .tile -->
-      <% end %>
-    </div><!-- .game-ui__hand__tiles -->
-
-    <% if @move_active %>
-      <%= form_with(model: @game, class: 'game-ui__form') do |f| %>
-        <div class="game-ui__form__data" data-target="move.form">
-        </div><!-- .game-ui__form__data -->
-
-        <div class="game-ui__form__controls">
-          <button
-            class="game-ui__form__button game-ui__form__button--alt"
-            data-action="click->move#undo"
-            data-target="move.control"
-            disabled="disabled"
-          >
-            Undo
-          </button>
-
-          <%=
-            f.submit \
-              'Move!',
-              disabled: true,
-              class: 'game-ui__form__button',
-              data: { target: 'move.control' }
-          %>
-        </div><!-- .game-ui__form__controls -->
-      <% end %>
-    <% end %>
-  </menu><!-- .game-ui__hand -->
+  <%= render('scoreboard', game: @game) %>
+  <%= render('board', game: @game) %>
+  <%=
+    render \
+      'hand',
+      game: @game,
+      move_active: @move_active,
+      current_player: @current_player
+  %>
 </div><!-- .game-ui -->
