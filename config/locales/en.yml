@@ -9,3 +9,6 @@ en:
     self: "You're always your own friend. :)"
   friend:
     removed: "You're no longer friends with %{username}."
+  session:
+    invalid_credentials: 'Username or password invalid'
+    logged_out: 'You have logged out.'
