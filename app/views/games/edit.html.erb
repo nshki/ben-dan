@@ -1,6 +1,7 @@
 <div
   class="game-ui"
-  data-controller="move"
+  data-controller="move live-reload"
+  data-live-reload-game-id="<%= @game.id %>"
   data-finished="<%= @game.finished?.to_s %>"
   data-move-active="<%= @move_active.to_s %>"
 >

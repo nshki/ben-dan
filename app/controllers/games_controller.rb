@@ -35,6 +35,7 @@ class GamesController < ApplicationController
       @game.pass_turn(call_save: true)
     end
 
+    ActionCable.server.broadcast("game_#{@game.id}", {})
     redirect_to(edit_game_path(@game))
   end
 
