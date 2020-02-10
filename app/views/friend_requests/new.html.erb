@@ -1,6 +1,8 @@
-<%= form_with(url: friend_requests_path) do |f| %>
-  <%= f.label(:username) %>
-  <%= f.text_field(:username) %>
+<%= form_with(url: friend_requests_path, class: 'form') do |f| %>
+  <div class="form__group">
+    <%= f.label(:username) %>
+    <%= f.text_field(:username) %>
+  </div><!-- .form__group -->
 
-  <%= f.submit('Add Friend') %>
+  <%= f.submit('Add Friend', class: 'button button--alt') %>
 <% end %>
