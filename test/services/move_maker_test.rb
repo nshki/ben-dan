@@ -41,7 +41,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     assert_equal(player2, game.current_player)      # Passes turn
   end
 
-  test 'returns false for moves that have gaps and does not update records' do
+  test 'adds errors for moves that have gaps and does not update records' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
     game = FactoryBot.create \
@@ -62,13 +62,15 @@ class MoveMakerTest < ActiveSupport::TestCase
     board = game.board
 
     assert_not(result_with_gap)
+    assert \
+      game.errors.full_messages.include?(I18n.t('game.move.must_be_gapless'))
     assert_nil(board[0][0]['tile'])
     assert_nil(board[0][1])
     assert_equal(%w[a a], player1.hand)
     assert_equal(player1, game.current_player)
   end
 
-  test 'returns false for non-straight moves and does not update records' do
+  test 'adds errors for non-straight moves and does not update records' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
     game = FactoryBot.create \
@@ -89,6 +91,8 @@ class MoveMakerTest < ActiveSupport::TestCase
     board = game.board
 
     assert_not(result_not_straight)
+    assert \
+      game.errors.full_messages.include?(I18n.t('game.move.must_be_straight'))
     assert_nil(board[0][0]['tile'])
     assert_nil(board[0][1])
     assert_nil(board[1][0])
@@ -97,7 +101,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     assert_equal(player1, game.current_player)
   end
 
-  test 'returns false for disconnected moves and does not update records' do
+  test 'adds errors for disconnected moves and does not update records' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
     game = FactoryBot.create \
@@ -118,6 +122,8 @@ class MoveMakerTest < ActiveSupport::TestCase
     board = game.board
 
     assert_not(result_disconnected)
+    assert \
+      game.errors.full_messages.include?(I18n.t('game.move.must_be_straight'))
     assert_nil(board[0][0]['tile'])
     assert_nil(board[0][1])
     assert_nil(board[1][0])
@@ -126,7 +132,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     assert_equal(player1, game.current_player)
   end
 
-  test 'returns false if start tile not filled and does not update records' do
+  test 'adds errors if start tile not filled and does not update records' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
     game = FactoryBot.create \
@@ -147,6 +153,8 @@ class MoveMakerTest < ActiveSupport::TestCase
     board = game.board
 
     assert_not(result_illegal_opener)
+    assert \
+      game.errors.full_messages.include?(I18n.t('game.move.illegal_opener'))
     assert_nil(board[0][0])
     assert_nil(board[0][1])
     assert_nil(board[1][0])
@@ -185,7 +193,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     assert_equal(player2, game.current_player)
   end
 
-  test 'returns false for out of bounds moves and does not update records' do
+  test 'adds errors for out of bounds moves and does not update records' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
     FactoryBot.create(:word, spelling: 'a')
@@ -207,6 +215,8 @@ class MoveMakerTest < ActiveSupport::TestCase
     board = game.board
 
     assert_not(result_out_of_bounds)
+    assert \
+      game.errors.full_messages.include?(I18n.t('game.move.must_be_in_bounds'))
     assert_equal('d', board[0][0]['tile'])
     assert_nil(board[0][1])
     assert_nil(board[1][0])
@@ -215,14 +225,17 @@ class MoveMakerTest < ActiveSupport::TestCase
     assert_equal(player1, game.current_player)
   end
 
-  test 'returns false for invalid words and does not update records' do
+  test 'adds errors for invalid words and does not update records' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
     FactoryBot.create(:word, spelling: 'a')
     FactoryBot.create(:word, spelling: 'd')
     game = FactoryBot.create \
       :game,
-      board: [[{ tile: 'd', rule: nil, player: nil }, nil], [nil, nil]],
+      board: [
+        [{ tile: 'd', rule: nil, player: nil }, nil],
+        [{ tile: nil, rule: :start, player: nil }, nil]
+      ],
       tile_bag: %w[b b b],
       users: [user1, user2],
       current_turn_user: user1
@@ -237,15 +250,17 @@ class MoveMakerTest < ActiveSupport::TestCase
     board = game.board
 
     assert_not(result_invalid_word)
+    assert \
+      game.errors.full_messages.include?(I18n.t('game.invalid_word'))
     assert_equal('d', board[0][0]['tile'])
     assert_nil(board[0][1])
-    assert_nil(board[1][0])
+    assert_nil(board[1][0]['tile'])
     assert_nil(board[1][1])
     assert_equal(%w[a a c c], player1.hand)
     assert_equal(player1, game.current_player)
   end
 
-  test 'returns false for present board tiles and does not update records' do
+  test 'adds errors for overlapping tiles and does not update records' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
     FactoryBot.create(:word, spelling: 'a')
@@ -267,6 +282,8 @@ class MoveMakerTest < ActiveSupport::TestCase
     board = game.board
 
     assert_not(result_tile_present)
+    assert \
+      game.errors.full_messages.include?(I18n.t('game.move.overlapping_tiles'))
     assert_equal('d', board[0][0]['tile'])
     assert_nil(board[0][1])
     assert_nil(board[1][0])
@@ -275,7 +292,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     assert_equal(player1, game.current_player)
   end
 
-  test 'returns false for non-existent hand tile and does not update records' do
+  test 'adds errors for non-existent hand tile and does not update records' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
     FactoryBot.create(:word, spelling: 'a')
@@ -297,6 +314,8 @@ class MoveMakerTest < ActiveSupport::TestCase
     board = game.board
 
     assert_not(result_non_existent_hand_tile)
+    assert \
+      game.errors.full_messages.include?(I18n.t('game.move.must_be_from_hand'))
     assert_equal('d', board[0][0]['tile'])
     assert_nil(board[0][1])
     assert_nil(board[1][0])
