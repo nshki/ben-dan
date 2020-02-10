@@ -29,6 +29,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     board = game.board
 
     assert(result)
+    assert(game.errors.empty?)
     assert_equal(['b'], game.tile_bag)              # Tiles get removed from bag
     assert_equal(%w[b b], player1.hand)             # Hand gets updated
     assert_equal('a', board[0][0]['tile'])          # 1st tile gets placed
@@ -41,7 +42,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     assert_equal(player2, game.current_player)      # Passes turn
   end
 
-  test 'adds errors for moves that have gaps and does not update records' do
+  test 'adds error for moves that have gaps and does not update records' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
     game = FactoryBot.create \
@@ -70,7 +71,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     assert_equal(player1, game.current_player)
   end
 
-  test 'adds errors for non-straight moves and does not update records' do
+  test 'adds error for non-straight moves and does not update records' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
     game = FactoryBot.create \
@@ -101,7 +102,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     assert_equal(player1, game.current_player)
   end
 
-  test 'adds errors for disconnected moves and does not update records' do
+  test 'adds error for disconnected moves and does not update records' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
     game = FactoryBot.create \
@@ -132,7 +133,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     assert_equal(player1, game.current_player)
   end
 
-  test 'adds errors if start tile not filled and does not update records' do
+  test 'adds error if start tile not filled and does not update records' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
     game = FactoryBot.create \
@@ -185,6 +186,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     board = game.board
 
     assert(result_legal_opener)
+    assert(game.errors.empty?)
     assert_nil(board[0][0])
     assert_nil(board[0][1])
     assert_equal('a', board[1][0]['tile'])
@@ -193,7 +195,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     assert_equal(player2, game.current_player)
   end
 
-  test 'adds errors for out of bounds moves and does not update records' do
+  test 'adds error for out of bounds moves and does not update records' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
     FactoryBot.create(:word, spelling: 'a')
@@ -225,7 +227,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     assert_equal(player1, game.current_player)
   end
 
-  test 'adds errors for invalid words and does not update records' do
+  test 'adds error for invalid words and does not update records' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
     FactoryBot.create(:word, spelling: 'a')
@@ -260,7 +262,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     assert_equal(player1, game.current_player)
   end
 
-  test 'adds errors for overlapping tiles and does not update records' do
+  test 'adds error for overlapping tiles and does not update records' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
     FactoryBot.create(:word, spelling: 'a')
@@ -292,7 +294,7 @@ class MoveMakerTest < ActiveSupport::TestCase
     assert_equal(player1, game.current_player)
   end
 
-  test 'adds errors for non-existent hand tile and does not update records' do
+  test 'adds error for non-existent hand tile and does not update records' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
     FactoryBot.create(:word, spelling: 'a')
