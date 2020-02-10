@@ -117,7 +117,7 @@ class MoveMaker
         return true if @board[col][row]['rule'] == 'start'
       end
 
-      error(I18n.t('game.move.illegal_opener'))
+      error(I18n.t('game.move.illegal_opener')) unless started?
       false
     end
 
