@@ -1,0 +1,27 @@
+.flash {
+  width: 100%;
+  margin: 1rem 0;
+  padding: 0.25rem 1rem;
+
+  &--notice {
+    background-color: $blue;
+    color: #fff;
+  }
+
+  &--alert {
+    background-color: $red;
+    color: #fff;
+  }
+}
+
+.validation-errors {
+  @extend .flash;
+  @extend .flash--alert;
+  padding-top: 0;
+  padding-bottom: 0;
+
+  ul {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}

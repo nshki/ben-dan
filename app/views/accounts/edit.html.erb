@@ -1,13 +1,17 @@
 <h2>Edit Account</h2>
 
-<%= form_with(model: @account, url: account_path) do |f| %>
+<%= form_with(model: @account, url: account_path, class: 'form') do |f| %>
   <div class="validation-errors"></div>
 
-  <%= f.label(:password) %>
-  <%= f.password_field(:password) %>
+  <div class="form__group">
+    <%= f.label(:password) %>
+    <%= f.password_field(:password) %>
+  </div><!-- .form__group -->
 
-  <%= f.label(:password_confirmation, 'Password Confirmation') %>
-  <%= f.password_field(:password_confirmation) %>
+  <div class="form__group">
+    <%= f.label(:password_confirmation, 'Password Confirmation') %>
+    <%= f.password_field(:password_confirmation) %>
+  </div>
 
-  <%= f.submit('Save') %>
+  <%= f.submit('Save', class: 'button button--alt') %>
 <% end %>

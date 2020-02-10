@@ -1,4 +1,6 @@
-<%= link_to('Add Friend', new_friend_request_path) %>
+<p>
+  <%= link_to('Add Friend', new_friend_request_path, class: 'button button--alt') %>
+</p>
 
 <% if @friend_requests.present? %>
   <h2>Friend Requests</h2>

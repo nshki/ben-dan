@@ -1,13 +1,15 @@
 .button {
   background-color: $green;
-  outline: none;
+  display: inline-block;
+  padding: 0.75rem 1rem;
   box-shadow: inset -5px -5px 5px darken($green, 5%);
   border: none;
   border-radius: 0.5rem;
-  padding: 0.75rem 1rem;
+  text-decoration: none;
   text-shadow: 1px 1px 3px darken($green, 20%);
   font-weight: bold;
   color: #fff;
+  outline: none;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 
@@ -22,6 +24,16 @@
 
     &:hover {
       background-color: lighten($blue, 10%);
+    }
+  }
+
+  &--warning {
+    background-color: lighten($red, 5%);
+    box-shadow: inset -5px -5px 5px $red;
+    text-shadow: 1px 1px 3px darken($red, 5%);
+
+    &:hover {
+      background-color: lighten($red, 10%);
     }
   }
 

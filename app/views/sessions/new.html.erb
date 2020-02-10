@@ -1,9 +1,13 @@
-<%= form_with(url: sessions_path) do |f| %>
-  <%= f.label(:username) %>
-  <%= f.text_field(:username) %>
+<%= form_with(url: sessions_path, class: 'form') do |f| %>
+  <div class="form__group">
+    <%= f.label(:username) %>
+    <%= f.text_field(:username) %>
+  </div><!-- .form__group -->
 
-  <%= f.label(:password) %>
-  <%= f.password_field(:password) %>
+  <div class="form__group">
+    <%= f.label(:password) %>
+    <%= f.password_field(:password) %>
+  </div><!-- .form__group -->
 
-  <%= f.submit('Login') %>
+  <%= f.submit('Login', class: 'button button--alt') %>
 <% end %>
