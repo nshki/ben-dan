@@ -1,14 +1,24 @@
 en:
   account:
-    updated: 'Successfully updated your account!'
+    updated: "Successfully updated your account!"
   friend_request:
-    sent: 'Friend request sent to %{to}!'
+    sent: "Friend request sent to %{to}!"
     accepted: "You're now friends with %{from}!"
-    declined: 'Declined friend request from %{from}.'
+    declined: "Declined friend request from %{from}."
     not_found: "The friend request wasn't found."
     self: "You're always your own friend. :)"
   friend:
     removed: "You're no longer friends with %{username}."
+  game:
+    invalid_word: "Invalid word."
+    move:
+      must_be_straight: "Make sure your move is a straight line."
+      must_be_gapless: "Make sure your move has no gaps."
+      must_be_touching: "Make sure your move is touching an existing tile."
+      must_be_in_bounds: "Make sure your move is within the board."
+      must_be_from_hand: "Make sure your move is using a tile from your hand."
+      overlapping_tiles: "Make sure your move is in empty squares."
+      illegal_opener: "Illegal opening move."
   session:
-    invalid_credentials: 'Username or password invalid'
-    logged_out: 'You have logged out.'
+    invalid_credentials: "Username or password invalid."
+    logged_out: "You have logged out."

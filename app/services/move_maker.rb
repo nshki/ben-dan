@@ -34,14 +34,30 @@ class MoveMaker
     #
     # @return {Boolean} - True if line without gaps, false otherwise
     def straight_no_gaps?
-      cols = @placements.map { |placement| placement[:col] }.sort
-      rows = @placements.map { |placement| placement[:row] }.sort
+      cols = cols_of_move.sort
+      rows = rows_of_move.sort
       vert_line = cols.uniq.count == 1
       horiz_line = rows.uniq.count == 1
-      return false unless vert_line || horiz_line
+      unless vert_line || horiz_line
+        return error(I18n.t('game.move.must_be_straight'))
+      end
 
       direction = vert_line ? :vert : :horiz
       gapless?(cols: cols, rows: rows, direction: direction)
+    end
+
+    # Gets a list of columns in the move.
+    #
+    # @return {Array<Integer>} - List of columns
+    def cols_of_move
+      @placements.map { |placement| placement[:col] }
+    end
+
+    # Gets a list of rows in the move.
+    #
+    # @return {Array<Integer>} - List of rows
+    def rows_of_move
+      @placements.map { |placement| placement[:row] }
     end
 
     # Checks for the absence of gaps.
@@ -52,12 +68,32 @@ class MoveMaker
     # @return {Boolean} - True if gapless, false otherwise
     def gapless?(cols:, rows:, direction:)
       if direction == :vert
-        (rows.first..rows.last).each do |row|
-          return false if @board[cols.first][row].blank?
-        end
+        rows_gapless?(col: cols.first, rows: rows)
       else
-        (cols.first..cols.last).each do |col|
-          return false if @board[col][rows.first].blank?
+        cols_gapless?(row: rows.first, cols: cols)
+      end
+    end
+
+    # Checks whether the given list of rows are gapless.
+    #
+    # @return {Boolean} - True if gapless, false otherwise
+    def rows_gapless?(col:, rows:)
+      (rows.first..rows.last).each do |row|
+        if @board[col][row].blank?
+          return error(I18n.t('game.move.must_be_gapless'))
+        end
+      end
+
+      true
+    end
+
+    # Checks whether the given list of columns are gapless.
+    #
+    # @return {Boolean} - True if gapless, false otherwise
+    def cols_gapless?(row:, cols:)
+      (cols.first..cols.last).each do |col|
+        if @board[col][row].blank?
+          return error(I18n.t('game.move.must_be_gapless'))
         end
       end
 
@@ -81,6 +117,7 @@ class MoveMaker
         return true if @board[col][row]['rule'] == 'start'
       end
 
+      error(I18n.t('game.move.illegal_opener'))
       false
     end
 
@@ -113,7 +150,7 @@ class MoveMaker
         return true if top || bottom || left || right
       end
 
-      false
+      error(I18n.t('game.move.must_be_touching'))
     end
 
     # Determines whether there is a tile present at the given coordinates.
@@ -139,6 +176,7 @@ class MoveMaker
       hand_tile = @current_player.hand[tile_index]
       @current_player.hand[tile_index] =
         @game.pull_random_tiles(count: 1, call_save: false).first
+      error(I18n.t('game.move.must_be_from_hand')) if hand_tile.blank?
       hand_tile
     end
 
@@ -156,7 +194,9 @@ class MoveMaker
     # @return {Boolean} - True if out of bounds, false otherwise
     def placement_out_of_bounds?(placement)
       col = @board[placement[:col]]
-      col.nil? || col.length <= placement[:row]
+      out_of_bounds = col.nil? || col.length <= placement[:row]
+      error(I18n.t('game.move.must_be_in_bounds')) if out_of_bounds
+      out_of_bounds
     end
 
     # Given a tile placement, returns true if a tile is already present on the
@@ -165,7 +205,9 @@ class MoveMaker
     # @param {Hash} placement - { col: Integer, row: Integer }
     # @return {Boolean} - True if board tile present, false otherwise
     def board_tile_present?(placement)
-      @board.dig(placement[:col], placement[:row], 'tile').present?
+      present = @board.dig(placement[:col], placement[:row], 'tile').present?
+      error(I18n.t('game.move.overlapping_tiles')) if present
+      present
     end
 
     # Places tile in board.
@@ -196,6 +238,14 @@ class MoveMaker
           player: @current_player
       end
       ok
+    end
+
+    # Adds an error to the Game instance and returns false.
+    #
+    # @return {Boolean} - False
+    def error(message)
+      @game.errors.add(:base, message)
+      false
     end
   end
 end

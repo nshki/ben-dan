@@ -57,4 +57,21 @@ class GamePlayTest < ApplicationSystemTestCase
 
     assert_text("me\n16")
   end
+
+  test 'errors get rendered when they are present' do
+    you = FactoryBot.create(:user, u: 'me', p: 'password')
+    opponent = FactoryBot.create(:user, u: 'rival')
+    game = GameCreator.call(users: [you, opponent])
+    game.update(current_turn_user: you)
+    game.player(you).update(hand: %w[h e l l o a b c])
+
+    login_with(username: 'me', password: 'password')
+    visit(edit_game_path(game))
+    tile = '.game-ui__hand .tile'
+    first(tile, text: 'H').click
+    find('[data-col="7"][data-row="7"]').click
+    click_on('Submit')
+
+    assert_text(I18n.t('game.invalid_word'))
+  end
 end

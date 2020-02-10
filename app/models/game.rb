@@ -172,7 +172,9 @@ class Game < ApplicationRecord
     end
 
     word = tiles.first['tile']
-    errors.add(:board, 'invalid word') if Word.find_by(spelling: word).blank?
+    return if Word.find_by(spelling: word).present?
+
+    errors.add(:base, I18n.t('game.invalid_word'))
   rescue StandardError
     # This is in case the board isn't a 2D array, causing "not array" errors.
     nil
@@ -204,6 +206,8 @@ class Game < ApplicationRecord
   def validate_word(word)
     return if word.blank? || word.length <= 1
 
-    errors.add(:board, 'invalid word') if Word.find_by(spelling: word).blank?
+    return if Word.find_by(spelling: word).present?
+
+    errors.add(:base, I18n.t('game.invalid_word'))
   end
 end

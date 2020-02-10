@@ -5,6 +5,8 @@
   data-finished="<%= @game.finished?.to_s %>"
   data-move-active="<%= @move_active.to_s %>"
 >
+  <div class="validation-errors"></div>
+
   <%= render('scoreboard', game: @game) %>
   <%= render('board', game: @game) %>
   <%=
