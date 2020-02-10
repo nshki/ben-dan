@@ -7,11 +7,6 @@
     <% if signed_in? %>
       <li class="nav__item"><%= link_to('Games', games_path) %></li>
       <li class="nav__item"><%= link_to('Friends', friends_path) %></li>
-    <% end %>
-  </ul><!-- .nav__items -->
-
-  <ul class="nav__items">
-    <% if signed_in? %>
       <li class="nav__item" data-controller="dropdown">
         <button
           data-target="dropdown.button"
