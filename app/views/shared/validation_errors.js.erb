@@ -1,6 +1,13 @@
 (function() {
+  const flash = document.querySelector('.flash');
   const container = document.querySelector('.validation-errors');
 
+  // Hide flash messages if they're present.
+  if (flash) {
+    flash.remove();
+  }
+
+  // Render and show model errors.
   if (container) {
     container.innerHTML =
       '<%=j render("shared/validation_errors", resource: resource) %>';
