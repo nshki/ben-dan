@@ -1,0 +1,31 @@
+<nav class="nav">
+  <h1 class="nav__logo">
+    <%= link_to('Ben Dan', root_path) %>
+  </h1><!-- .nav__logo -->
+
+  <ul class="nav__items">
+    <% if signed_in? %>
+      <li class="nav__item"><%= link_to('Games', games_path) %></li>
+      <li class="nav__item"><%= link_to('Friends', friends_path) %></li>
+      <li class="nav__item" data-controller="dropdown">
+        <button
+          data-target="dropdown.button"
+          data-action="click->dropdown#toggle click@window->dropdown#hide"
+        >
+          <%= current_user.username %>
+        </button>
+
+        <ul class="nav__dropdown">
+          <li class="nav__item">
+            <%= link_to('Account', edit_account_path) %>
+          </li><!-- .nav__item -->
+          <li class="nav__item">
+            <%= link_to("Logout", session_path(-1), method: :delete) %>
+          </li><!-- .nav__item -->
+        </ul><!-- .nav__dropdown -->
+      </li><!-- .nav__item -->
+    <% else %>
+      <li class="nav__item"><%= link_to('Login', new_session_path) %></li>
+    <% end %>
+  </ul><!-- .nav__items -->
+</nav><!-- .nav -->

@@ -15,8 +15,11 @@
   padding: 1rem 2rem;
   text-align: center;
 
-  &--active {
-    background-color: $green;
+  &--active:after {
+    content: '(Turn)';
+    text-transform: lowercase;
+    font-weight: bold;
+    color: $blue;
   }
 }
 

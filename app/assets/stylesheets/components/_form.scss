@@ -1,0 +1,18 @@
+.form {
+  margin: 1rem 0;
+
+  label {
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  [type="submit"] {
+    margin-top: 1rem;
+  }
+}
+
+.form__group {
+  & + & {
+    margin-top: 1rem;
+  }
+}
