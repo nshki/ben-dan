@@ -11,6 +11,7 @@ class MoveMaker
     def call(game:, placements:)
       @game = game
       @board = game.board
+      @initial_board = @board.deep_dup
       @placements = placements
       @current_player = @game.current_player
 
@@ -117,7 +118,7 @@ class MoveMaker
         return true if @board[col][row]['rule'] == 'start'
       end
 
-      error(I18n.t('game.move.illegal_opener'))
+      error(I18n.t('game.move.illegal_opener')) unless started?
       false
     end
 
@@ -163,7 +164,7 @@ class MoveMaker
 
       return true if col >= @board.count || row >= @board.first.count
 
-      tile = @board[col][row]
+      tile = @initial_board[col][row]
       tile.present? && tile['tile'].present?
     end
 
