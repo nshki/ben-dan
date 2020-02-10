@@ -103,33 +103,31 @@ class MoveMakerTest < ActiveSupport::TestCase
   end
 
   test 'adds error for disconnected moves and does not update records' do
+    FactoryBot.create(:word, spelling: 'oh')
+    FactoryBot.create(:word, spelling: 'no')
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
-    game = FactoryBot.create \
-      :game,
-      tile_bag: %w[b b b],
-      board: [[{ tile: nil, rule: :start, player: nil }, nil], [nil, nil]],
-      users: [user1, user2],
-      current_turn_user: user1
+    game = GameCreator.call(users: [user1, user2])
+    game.board[7][7]['tile'] = 'o'
+    game.board[8][7] = { tile: 'h', rule: nil, player: nil }
+    game.save(validate: false)
+    game.update(current_turn_user: user1)
     player1 = game.player(user1)
-    player1.update(hand: %w[a a])
-    FactoryBot.create(:word, spelling: 'aa')
+    player1.update(hand: %w[n o])
 
     result_disconnected = MoveMaker.call \
       game: game,
-      placements: [{ col: 0, row: 0, tile: 0 }, { col: 1, row: 1, tile: 1 }]
+      placements: [{ col: 8, row: 9, tile: 0 }, { col: 9, row: 9, tile: 1 }]
     game.reload
     player1.reload
     board = game.board
 
     assert_not(result_disconnected)
     assert \
-      game.errors.full_messages.include?(I18n.t('game.move.must_be_straight'))
-    assert_nil(board[0][0]['tile'])
-    assert_nil(board[0][1])
-    assert_nil(board[1][0])
-    assert_nil(board[1][1])
-    assert_equal(%w[a a], player1.hand)
+      game.errors.full_messages.include?(I18n.t('game.move.must_be_touching'))
+    assert_nil(board[8][9])
+    assert_nil(board[9][9]['tile'])
+    assert_equal(%w[n o], player1.hand)
     assert_equal(player1, game.current_player)
   end
 
