@@ -1,3 +1,4 @@
+@import './config/base';
 @import './config/colors';
 
 @import './components/board';
@@ -8,13 +9,3 @@
 @import './components/game_ui';
 @import './components/nav';
 @import './components/tile';
-
-*, *::before, *::after {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-}
