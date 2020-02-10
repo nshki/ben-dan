@@ -113,12 +113,15 @@ class ScoreCalculator
     # @return {Array<Array<Hash>>} - [[{ <tile hash> }]]
     def new_words
       words = []
+
       @placements.each do |placement|
         horiz_word = horiz_tiles(placement)
         vert_word = vert_tiles(placement)
         words.push(horiz_word) unless words.include?(horiz_word)
         words.push(vert_word) unless words.include?(vert_word)
       end
+
+      words.push(single_letter_move)
       words.compact
     end
 
@@ -160,6 +163,20 @@ class ScoreCalculator
       end
 
       tiles.count > 1 ? tiles : nil
+    end
+
+    # Returns a single tile if the move was consisted of just a single letter.
+    #
+    # @return {Array<Hash>} -
+    #   [{ tile: String, rule: String, col: Integer, row: Integer }]
+    def single_letter_move
+      return unless @placements.count == 1
+
+      placement = @placements.first
+      col = placement[:col]
+      row = placement[:row]
+      tile = @board.dig(placement[:col], placement[:row])
+      [tile.merge(col: col, row: row)]
     end
 
     # Shimmy down to the furthest non-blank, horizontal tile.
