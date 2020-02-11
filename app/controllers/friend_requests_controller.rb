@@ -49,7 +49,7 @@ class FriendRequestsController < ApplicationController
     notice = I18n.t('friend_request.sent', to: user.username)
 
     # Send a new request.
-    friend_request = Friend.create(user: current_user, friend: user)
+    friend_request = Friend.find_or_create_by(user: current_user, friend: user)
 
     # Handle the mutual request case.
     if friend_request.reciprocal.present?

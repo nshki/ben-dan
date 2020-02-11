@@ -17,6 +17,21 @@ class FriendManagementTest < ApplicationSystemTestCase
     assert_equal(0, fren.friends.count)
   end
 
+  test "duplicate requests don't cause errors" do
+    me = FactoryBot.create(:user, u: 'me', p: 'password')
+    fren = FactoryBot.create(:user, u: 'fren', p: 'password')
+    FactoryBot.create(:friend_request, user: me, friend: fren)
+
+    login_with(username: 'me', password: 'password')
+    visit(new_friend_request_path)
+    fill_in('Username', with: 'fren')
+    click_on('Add Friend')
+
+    assert_text(I18n.t('friend_request.sent', to: fren.username))
+    assert_equal(1, me.friends.count)
+    assert_equal(0, fren.friends.count)
+  end
+
   test 'become friends if you send mutual friend requests' do
     me = FactoryBot.create(:user, u: 'me', p: 'password')
     fren = FactoryBot.create(:user, u: 'fren', p: 'password')
