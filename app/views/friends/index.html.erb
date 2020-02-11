@@ -5,15 +5,17 @@
 <% if @friend_requests.present? %>
   <h2>Friend Requests</h2>
 
-  <ul>
+  <ul class="friend-cards">
     <% @friend_requests.each do |friend_request| %>
       <% presenter = FriendRequestPresenter.new(friend_request) %>
-      <li>
-        <%= presenter.name %>
+      <li class="friend-card">
+        <h3 class="friend-card__name">
+          <%= presenter.name %>
+        </h3><!-- .friend-card__name -->
 
         <%= form_with(url: friends_path) do |f| %>
           <%= f.hidden_field(:id, value: presenter.id) %>
-          <%= f.submit('Accept') %>
+          <%= f.submit('Accept', class: 'button') %>
         <% end %>
 
         <%=
@@ -22,33 +24,35 @@
             method: :delete
           ) do |f|
         %>
-          <%= f.submit('Decline') %>
+          <%= f.submit('Decline', class: 'button button--warning') %>
         <% end %>
-      </li>
+      </li><!-- .friend-card -->
     <% end %>
-  </ul>
+  </ul><!-- .friend-cards -->
 <% end %>
 
 <h2>Friends</h2>
 
 <% if @friends.present? %>
-  <ul>
+  <ul class="friend-cards">
     <% @friends.each do |friend| %>
       <% presenter = FriendPresenter.new(friend) %>
-      <li>
-        <%= presenter.name %>
+      <li class="friend-card">
+        <h3 class="friend-card__name">
+          <%= presenter.name %>
+        </h3><!-- .friend-card__name -->
 
         <%= form_with(url: games_path) do |f| %>
           <%= f.hidden_field(:opponent_id, value: presenter.id) %>
-          <%= f.submit('Play') %>
+          <%= f.submit('Play', class: 'button') %>
         <% end %>
 
         <%= form_with(model: friend, method: :delete) do |f| %>
-          <%= f.submit('Remove') %>
+          <%= f.submit('Remove', class: 'button button--warning') %>
         <% end %>
-      </li>
+      </li><!-- .friend-card -->
     <% end %>
-  </ul>
+  </ul><!-- .friend-cards -->
 <% else %>
   <p>It's lonely in here... Why not add some friends?</p>
 <% end %>
