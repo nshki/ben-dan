@@ -32,12 +32,4 @@ class UserTest < ActiveSupport::TestCase
 
     assert_not(user.valid?)
   end
-
-  test 'invalid without password at least 4 characters long' do
-    less_than = FactoryBot.build(:user, p: '123')
-    equal_to = FactoryBot.build(:user, p: '1234')
-
-    assert_not(less_than.valid?)
-    assert(equal_to.valid?)
-  end
 end
