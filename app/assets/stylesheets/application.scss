@@ -1,11 +1,12 @@
-@import './config/base';
 @import './config/colors';
+@import './config/base';
 
 @import './components/board';
 @import './components/button';
 @import './components/container';
 @import './components/flash';
 @import './components/form';
+@import './components/game_card';
 @import './components/game_ui';
 @import './components/nav';
 @import './components/tile';

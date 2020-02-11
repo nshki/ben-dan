@@ -54,6 +54,7 @@
   border-radius: 0.5rem;
   box-shadow: 0 3px 5px rgba(#000, 0.4);
   position: absolute;
+  z-index: 2;
   top: calc(100% - 0.3rem);
   right: 0.3rem;
   list-style: none;

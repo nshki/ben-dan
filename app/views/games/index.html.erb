@@ -5,15 +5,31 @@
 </p>
 
 <% if @games.any? %>
-  <ul>
+  <ul class="game-cards">
     <% @games.each do |game| %>
-      <li>
-        <%=
-          link_to \
-            "Game with #{game.opponent_of(current_user)}",
-            edit_game_path(game)
-        %>
-      </li>
+      <li class="game-card">
+        <%= link_to(edit_game_path(game)) do %>
+          <div class="game-card__board">
+            <% game.board.each do |col| %>
+              <% col.each do |tile| %>
+                <% if tile.try(:[], 'tile').present? %>
+                  <div
+                    class="game-card__board__tile game-card__board__tile--fill"
+                  >
+                  </div>
+                <% else %>
+                  <div class="game-card__board__tile"></div>
+                <% end %>
+              <% end %>
+            <% end %>
+          </div><!-- .game-card__board -->
+
+          <div class="game-card__meta">
+            <h2><%= game.opponent_of(current_user) %></h2>
+            <p>Started <%= time_ago_in_words(game.created_at) %> ago</p>
+          </div><!-- .game-card__meta -->
+        <% end %>
+      </li><!-- .game-card -->
     <% end %>
-  </ul>
+  </ul><!-- .game-cards -->
 <% end %>
