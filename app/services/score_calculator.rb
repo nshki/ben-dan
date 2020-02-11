@@ -110,18 +110,29 @@ class ScoreCalculator
 
     # Find new words formed by the move.
     #
-    # @return {Array<Array<Hash>>} - [[{ <tile hash> }]]
+    # @return {Array<Array<Hash>>} -
+    #   [[{ tile: String, col: Integer, row: Integer }]]
     def new_words
+      words = words_from(@placements)
+      words.push(single_letter_opener)
+      without_duplicates(words.compact)
+    end
+
+    # Given a list of coordinates, extract the words that are "attached."
+    #
+    # @param {Array<Hash>|Array<Array<Hash>>} coords - Coordinates
+    # @return {Array<Array<Hash>>} -
+    #   [[{ tile: String, col: Integer, row: Integer }]]
+    def words_from(coords)
       words = []
 
-      @placements.each do |placement|
-        horiz_word = horiz_tiles(placement)
-        vert_word = vert_tiles(placement)
-        words.push(horiz_word) unless words.include?(horiz_word)
-        words.push(vert_word) unless words.include?(vert_word)
+      coords.flatten.each do |coord|
+        horiz_word = horiz_tiles(coord)
+        vert_word = vert_tiles(coord)
+        words.push(horiz_word)
+        words.push(vert_word)
       end
 
-      words.push(single_letter_opener)
       words.compact
     end
 
@@ -137,7 +148,8 @@ class ScoreCalculator
 
       # Add tiles to the list.
       while (curr_tile = @board.dig(curr_col, curr_row)) &&
-            curr_tile.try(:[], 'tile').present?
+            curr_tile.symbolize_keys! &&
+            curr_tile.try(:[], :tile).present?
         tiles.push(curr_tile.merge(col: curr_col, row: curr_row))
         curr_col += 1
       end
@@ -157,7 +169,8 @@ class ScoreCalculator
 
       # Add tiles to the list.
       while (curr_tile = @board.dig(curr_col, curr_row)) &&
-            curr_tile.try(:[], 'tile').present?
+            curr_tile.symbolize_keys! &&
+            curr_tile.try(:[], :tile).present?
         tiles.push(curr_tile.merge(col: curr_col, row: curr_row))
         curr_row += 1
       end
@@ -176,7 +189,8 @@ class ScoreCalculator
       col = placement[:col]
       row = placement[:row]
       tile = @board.dig(placement[:col], placement[:row])
-      return unless tile['rule'] == 'start'
+      tile.symbolize_keys!
+      return unless tile[:rule] == 'start'
 
       [tile.merge(col: col, row: row)]
     end
@@ -188,8 +202,9 @@ class ScoreCalculator
     # @return {Integer} - Column index
     def shimmy_col(col:, row:)
       while col.positive? &&
-            @board.dig(col - 1, row).present? &&
-            @board[col - 1][row]['tile'].present?
+            (tile = @board.dig(col - 1, row)) &&
+            tile.symbolize_keys! &&
+            tile[:tile].present?
         col -= 1
       end
 
@@ -203,11 +218,44 @@ class ScoreCalculator
     # @return {Integer} - Row index
     def shimmy_row(col:, row:)
       while row.positive? &&
-            @board.dig(col, row - 1).present? &&
-            @board[col][row - 1]['tile'].present?
+            (tile = @board.dig(col, row - 1)) &&
+            tile.symbolize_keys! &&
+            tile[:tile].present?
         row -= 1
       end
+
       row
+    end
+
+    # Removes words that share the same coordinates in a list and returns a
+    # clean list.
+    #
+    # @param {Array<Array<Hash>>} words -
+    #   [[{ tile: String, col: Integer, row: Integer }]]
+    # @return {Array<Array<Hash>>} -
+    #   [[{ tile: String, col: Integer, row: Integer }]]
+    def without_duplicates(words)
+      signatures = []
+      clean_words = []
+
+      words.each do |word|
+        signature = word_signature(word)
+        next if signatures.include?(signature)
+
+        signatures.push(signature)
+        clean_words.push(word)
+      end
+
+      clean_words
+    end
+
+    # Generates a string signature of a word's coordinates.
+    #
+    # @param {Array<Hash>} word - [{ tile: String, col: Integer, row: Integer }]
+    # @return {String} - col:row:col:row:col:row repeating
+    def word_signature(word)
+      coords = word.map { |tile| "#{tile[:col]}:#{tile[:row]}" }
+      coords.join(':')
     end
   end
 end

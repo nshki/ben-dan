@@ -6,32 +6,25 @@ class ScoreCalculatorTest < ActiveSupport::TestCase
   test 'correctly calculates score' do
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
-    FactoryBot.create(:word, spelling: 'aa')
-    game = FactoryBot.create(:game, users: [user1, user2])
-    game.update \
-      current_turn_user: user1,
-      board: [
-        [
-          { player: game.player(user1).id, tile: 'a', rule: nil },
-          { player: game.player(user1).id, tile: 'a', rule: nil }
-        ],
-        [
-          { player: game.player(user2).id, tile: 'a', rule: nil },
-          nil
-        ]
-      ]
-    placements = [{ col: 0, row: 0, tile: 0 }]
+    FactoryBot.create(:word, spelling: 'oh')
+    FactoryBot.create(:word, spelling: 'hi')
+    game = GameCreator.call(users: [user1, user2])
+    game.board[6][6] = { tile: 'o', rule: nil, player: game.player(user1).id }
+    game.board[6][7] = { tile: 'h', rule: nil, player: nil }
+    game.board[7][7]['tile'] = 'i'
+    game.save
+    placements = [{ col: 6, row: 6, tile: 0 }]
 
     ScoreCalculator.call \
       game: game,
       placements: placements,
       player: game.player(user1)
 
-    assert_equal(4, game.player(user1).score)
+    assert_equal(5, game.player(user1).score)
     assert_equal(0, game.player(user2).score)
   end
 
-  test 'correctly calculates score for single letter word' do
+  test 'correctly calculates score for single letter opener' do
     FactoryBot.create(:word, spelling: 'h')
     user1 = FactoryBot.create(:user, username: 'User 1')
     user2 = FactoryBot.create(:user, username: 'User 2')
