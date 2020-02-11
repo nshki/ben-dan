@@ -22,3 +22,6 @@ en:
   session:
     invalid_credentials: "Username or password invalid."
     logged_out: "You have logged out."
+  user:
+    password:
+      length: "Make sure your password is at least 4 characters long."
