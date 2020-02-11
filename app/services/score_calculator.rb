@@ -121,7 +121,7 @@ class ScoreCalculator
         words.push(vert_word) unless words.include?(vert_word)
       end
 
-      words.push(single_letter_move)
+      words.push(single_letter_opener)
       words.compact
     end
 
@@ -169,13 +169,15 @@ class ScoreCalculator
     #
     # @return {Array<Hash>} -
     #   [{ tile: String, rule: String, col: Integer, row: Integer }]
-    def single_letter_move
+    def single_letter_opener
       return unless @placements.count == 1
 
       placement = @placements.first
       col = placement[:col]
       row = placement[:row]
       tile = @board.dig(placement[:col], placement[:row])
+      return unless tile['rule'] == 'start'
+
       [tile.merge(col: col, row: row)]
     end
 
