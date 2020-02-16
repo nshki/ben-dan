@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Given a tile, provides methods to assist in rendering it.
-class TilePresenter
+class BoardTilePresenter
   # Constructor.
   #
   # @param {Hash} tile - { tile: String, rule: String }

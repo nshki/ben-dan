@@ -3,7 +3,8 @@
     <div class="board__col">
       <% col.each_with_index do |tile, y| %>
         <%
-          presenter = TilePresenter.new(tile: tile, bem_base: 'board__tile')
+          presenter =
+            BoardTilePresenter.new(tile: tile, bem_base: 'board__tile')
         %>
         <div
           class="<%= presenter.css_classes %>"
