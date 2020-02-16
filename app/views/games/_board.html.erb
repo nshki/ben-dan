@@ -10,7 +10,12 @@
           class="<%= presenter.css_classes %>"
           data-col="<%= x %>"
           data-row="<%= y %>"
-          data-action="click->move#placeTile"
+          data-action="
+            click->move#placeTile
+            drop->move#placeTile
+            dragover->move#hoverTile
+            dragleave->move#unhoverTile
+          "
         >
           <% if presenter.content.present? %>
             <div

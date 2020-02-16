@@ -3,10 +3,11 @@
     <% current_player.hand.each_with_index do |tile, index| %>
       <div
         class="tile"
-        data-action="click->move#selectTile"
+        data-action="click->move#selectTile dragstart->move#selectTile"
         data-target="move.tile"
         data-index="<%= index %>"
         data-points="<%= ScoreCalculator::STANDARD_VALUES[tile.to_sym] %>"
+        draggable="true"
       >
         <%= tile %>
       </div><!-- .tile -->

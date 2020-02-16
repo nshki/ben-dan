@@ -10,11 +10,31 @@ export default class extends Controller {
    * @return {void}
    */
   selectTile(e) {
-    if (this.notMyTurn() || this.notInHand(e.target)) { return; }
+    if (this.notMyTurn()) { return; }
 
     this.deselectTiles();
     e.target.classList.add('selected');
     this.boardTarget.classList.add('placeable');
+  }
+
+  /**
+   * Adds hover class to board square.
+   *
+   * @return {void}
+   */
+  hoverTile(e) {
+    e.preventDefault();
+    e.target.classList.add('hover')
+  }
+
+  /**
+   * Removes hover class from board square.
+   *
+   * @return {void}
+   */
+  unhoverTile(e) {
+    e.preventDefault();
+    e.target.classList.remove('hover');
   }
 
   /**
@@ -24,6 +44,7 @@ export default class extends Controller {
    * @return {void}
    */
   placeTile(e) {
+    e.preventDefault();
     const tile = this.selectedTile();
     if (!tile || this.hasTile(e.target)) { return; }
 
@@ -106,16 +127,6 @@ export default class extends Controller {
    */
   notMyTurn() {
     return this.data.get('active') === 'false';
-  }
-
-  /**
-   * Returns whether the given element is in the hand.
-   *
-   * @param {Element} el - DOM element
-   * @return {Boolean} - True if in hand, false otherwise
-   */
-  notInHand(el) {
-    return !el.parentNode.classList.contains('game-ui__hand__tiles');
   }
 
   /**
