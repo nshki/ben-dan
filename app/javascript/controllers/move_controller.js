@@ -1,7 +1,7 @@
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
-  static targets = ['board', 'tile', 'hand', 'form', 'submit'];
+  static targets = ['board', 'square', 'tile', 'hand', 'form', 'submit'];
 
   /**
    * Selects a tile from the player's hand.
@@ -35,6 +35,16 @@ export default class extends Controller {
   unhoverTile(e) {
     e.preventDefault();
     e.target.classList.remove('hover');
+  }
+
+  /**
+   * Removes hover class from all board squares.
+   *
+   * @return {void}
+   */
+  clearHovers(e) {
+    e.preventDefault();
+    this.squareTargets.map((square) => square.classList.remove('hover'));
   }
 
   /**

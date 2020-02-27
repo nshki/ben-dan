@@ -8,6 +8,7 @@
         %>
         <div
           class="<%= presenter.css_classes %>"
+          data-target="move.square"
           data-col="<%= x %>"
           data-row="<%= y %>"
           data-action="
@@ -15,6 +16,7 @@
             drop->move#placeTile
             dragover->move#hoverTile
             dragleave->move#unhoverTile
+            dragend->move#clearHovers
           "
         >
           <% if presenter.content.present? %>
