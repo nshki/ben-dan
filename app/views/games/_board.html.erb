@@ -3,13 +3,21 @@
     <div class="board__col">
       <% col.each_with_index do |tile, y| %>
         <%
-          presenter = TilePresenter.new(tile: tile, bem_base: 'board__tile')
+          presenter =
+            BoardTilePresenter.new(tile: tile, bem_base: 'board__tile')
         %>
         <div
           class="<%= presenter.css_classes %>"
+          data-target="move.square"
           data-col="<%= x %>"
           data-row="<%= y %>"
-          data-action="click->move#placeTile"
+          data-action="
+            click->move#placeTile
+            drop->move#placeTile
+            dragover->move#hoverTile
+            dragleave->move#unhoverTile
+            dragend->move#clearHovers
+          "
         >
           <% if presenter.content.present? %>
             <div

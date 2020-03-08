@@ -21,9 +21,20 @@
   position: relative;
   transition: box-shadow 0.2s ease-in-out;
 
-  .placeable &:hover {
+  .placeable &:hover,
+  .placeable &.hover {
     box-shadow: inset 5px 5px 5px rgba(#000, 0.2);
     cursor: pointer;
+  }
+
+  .tile {
+    transition: all 0.1s ease-in-out;
+
+    &.selected {
+      position: relative;
+      z-index: 2;
+      transform: translate3d(0, -0.5rem, 0);
+    }
   }
 }
 
